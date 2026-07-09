@@ -1,0 +1,291 @@
+const translations = {
+    en: {
+        "tab.webp":        "Convert to WebP",
+        "tab.minify":      "Minify Files",
+        "tab.wp":          "Convert to WP",
+        "tab.beautify":    "Beautify Files",
+        "tab.svg":         "Optimize SVG",
+        "tab.svgFill":     "SVG Colors",
+
+        "common.selectFiles":  "Select files",
+        "common.selectFolder": "Select folder",
+        "common.downloadBtn":  "Download files",
+
+        "webp.title":       "Convert images to WebP",
+        "webp.resize":      "Enable resize",
+        "webp.quality":     "WebP quality",
+        "webp.maxWidth":    "Max width (px)",
+        "webp.keepName":    "Keep original filename (no .webp extension)",
+        "webp.selectBtn":   "Select folder",
+        "webp.convertBtn":  "Convert to WebP",
+        "webp.downloadBtn": "Download WebP",
+
+        "minify.title":       "Minify Files",
+        "minify.minifyBtn":   "Minify",
+        "minify.downloadBtn": "Download Minified",
+
+        "wp.title":      "Convert to WordPress",
+        "wp.desc":       "Select a folder with .php files to convert them to WordPress theme format.",
+        "wp.convertBtn": "Convert to WP",
+
+        "beautify.title":       "Beautify Files",
+        "beautify.desc":        "Select minified .js or .css files to format them.",
+        "beautify.beautifyBtn": "Beautify",
+
+        "svg.title":       "Optimize SVG",
+        "svg.desc":        "Select .svg files to reduce their size. Files are replaced in place.",
+        "svg.optimizeBtn": "Optimize",
+
+        "svgFill.title":            "Change SVG colors",
+        "svgFill.desc":             "Leave a field empty to keep the original value.",
+        "svgFill.fill":             "Fill",
+        "svgFill.stroke":           "Stroke",
+        "svgFill.emptyHint":        "empty = no change",
+        "svgFill.rename":           "Name",
+        "svgFill.renamePlaceholder":"empty = original name",
+        "svgFill.applyBtn":         "Apply color",
+
+        "tab.svgGroup":                    "SVG",
+        "tab.codeGroup":                   "Min / Beautify",
+        "tab.wpGroup":                     "WordPress",
+        "tab.template":                    "Create Template",
+        "template.title":                  "Create Project from Template",
+        "template.projectTitle":           "Page title (inserted in <title>)",
+        "template.projectTitlePlaceholder":"e.g. Company – Site Name",
+        "template.folderName":             "New folder name",
+        "template.folderNamePlaceholder":  "e.g. my-project",
+        "template.destination":            "Destination folder",
+        "template.selectDest":             "Select folder",
+        "template.libraries":              "Libraries",
+        "template.typesquareLabel":        "Typesquare",
+        "template.typesquare":             "Include Typesquare font script in header",
+        "template.createBtn":              "Create Project",
+
+        "tab.wpTheme":               "WP Theme",
+        "wpTheme.title":             "Create WordPress Theme",
+        "wpTheme.srcFolder":         "Source folder (static PHP project)",
+        "wpTheme.selectFolder":      "Select",
+        "wpTheme.themeName":         "Theme name",
+        "wpTheme.themeNamePlaceholder": "e.g. Company Name",
+        "wpTheme.archiveTypes":      "Post types & posts per page",
+        "wpTheme.addType":           "+ Add post type",
+        "wpTheme.postalLabel":       "CF7 postal code pages",
+        "wpTheme.postalHint":        "Slugs separated by comma (e.g. contact, confirm)",
+        "wpTheme.destFolder":        "Destination folder",
+        "wpTheme.createBtn":         "Generate WP Theme",
+        "wpTheme.errorNoSrc":        "Please select the source folder.",
+        "wpTheme.errorNoName":       "Please enter the theme name.",
+        "wpTheme.errorNoDest":       "Please select the destination folder.",
+        "wpTheme.generating":        "Generating theme...",
+        "wpTheme.done":              "Theme generated at: ",
+        "wpTheme.typePlaceholder":   "post type (e.g. blog)",
+        "wpTheme.countPlaceholder":  "posts/page",
+
+        "template.errorNoTitle":     "Please enter the page title.",
+        "template.errorNoFolder":    "Please enter the folder name.",
+        "template.errorNoDest":      "Please select the destination folder.",
+        "template.creating":         "Creating project...",
+        "template.done":             "Project created at: ",
+
+        "common.error":              "Error: ",
+        "common.errorSelect":        "Selection error: ",
+        "common.selectingDest":      "Selecting destination folder...",
+        "common.downloadCancelled":  "Download cancelled.",
+        "common.savedTo":            "Files saved to: ",
+        "common.folderSelected":     "Folder: ",
+        "common.fileSelected":       "File: ",
+        "common.filesSelected":      " files selected.",
+        "common.noSvgFiles":         "No .svg files found.",
+        "common.noPhpFiles":         "No .php files found.",
+
+        "webp.noImages":             "No images (.jpg, .jpeg, .png) found in selection.",
+        "webp.converting":           "Converting images...",
+        "webp.done":                 "Done! ",
+        "webp.downloadDone":         "Download complete!",
+
+        "minify.minifying":          "Minifying files...",
+        "minify.done":               " files minified!",
+        "minify.filesSelected":      " files selected.",
+        "minify.savedTo":            "Files downloaded to: ",
+
+        "svgFill.colorRequired":     "Enter at least one color (fill or stroke).",
+        "svgFill.applying":          "Applying ",
+        "svgFill.done":              " files processed!",
+
+        "svg.optimizing":            "Optimizing SVGs...",
+        "svg.done":                  " SVGs optimized! ",
+
+        "beautify.noFiles":          "No .js or .css files found.",
+        "beautify.beautifying":      "Formatting files...",
+        "beautify.done":             " files formatted!",
+
+        "wp.folderSelected":         "Folder: ",
+        "wp.fileSelected":           "File: ",
+        "wp.noPhpFiles":             "No .php files found in selection.",
+        "wp.converting":             "Converting files...",
+        "wp.done":                   "Done! ",
+    },
+    jp: {
+        "tab.webp":        "WebPに変換",
+        "tab.minify":      "ファイル圧縮",
+        "tab.wp":          "WPに変換",
+        "tab.beautify":    "ファイル整形",
+        "tab.svg":         "SVG最適化",
+        "tab.svgFill":     "SVGカラー",
+
+        "common.selectFiles":  "ファイルを選択",
+        "common.selectFolder": "フォルダを選択",
+        "common.downloadBtn":  "ファイルをダウンロード",
+
+        "webp.title":       "画像をWebPに変換",
+        "webp.resize":      "リサイズを有効にする",
+        "webp.quality":     "WebP品質",
+        "webp.maxWidth":    "最大幅 (px)",
+        "webp.keepName":    "元のファイル名を保持（.webp拡張子なし）",
+        "webp.selectBtn":   "フォルダを選択",
+        "webp.convertBtn":  "WebPに変換",
+        "webp.downloadBtn": "WebPをダウンロード",
+
+        "minify.title":       "ファイル圧縮",
+        "minify.minifyBtn":   "圧縮する",
+        "minify.downloadBtn": "圧縮済みをダウンロード",
+
+        "wp.title":      "WordPressに変換",
+        "wp.desc":       ".phpファイルのフォルダを選択してWordPressテーマ形式に変換します。",
+        "wp.convertBtn": "WPに変換",
+
+        "beautify.title":       "ファイル整形",
+        "beautify.desc":        "圧縮済みの.jsまたは.cssファイルを選択して整形します。",
+        "beautify.beautifyBtn": "整形する",
+
+        "svg.title":       "SVG最適化",
+        "svg.desc":        ".svgファイルを選択してサイズを削減します。ファイルは元の場所に上書きされます。",
+        "svg.optimizeBtn": "最適化",
+
+        "svgFill.title":            "SVGカラー変更",
+        "svgFill.desc":             "空欄のままにすると元の値が保持されます。",
+        "svgFill.fill":             "塗り",
+        "svgFill.stroke":           "線",
+        "svgFill.emptyHint":        "空欄 = 変更なし",
+        "svgFill.rename":           "ファイル名",
+        "svgFill.renamePlaceholder":"空欄 = 元のファイル名",
+        "svgFill.applyBtn":         "色を適用",
+
+        "tab.svgGroup":                    "SVG",
+        "tab.codeGroup":                   "圧縮 / 整形",
+        "tab.wpGroup":                     "WordPress",
+        "tab.template":                    "テンプレート作成",
+        "template.title":                  "テンプレートからプロジェクト作成",
+        "template.projectTitle":           "ページタイトル（<title>に入ります）",
+        "template.projectTitlePlaceholder":"例：会社名 – サイト名",
+        "template.folderName":             "新しいフォルダ名",
+        "template.folderNamePlaceholder":  "例：my-project",
+        "template.destination":            "保存先フォルダ",
+        "template.selectDest":             "フォルダを選択",
+        "template.libraries":              "ライブラリ",
+        "template.typesquareLabel":        "Typesquare",
+        "template.typesquare":             "Typesquareフォントスクリプトをヘッダーに含める",
+        "template.createBtn":              "プロジェクトを作成",
+
+        "tab.wpTheme":               "WPテーマ作成",
+        "wpTheme.title":             "WordPressテーマを作成",
+        "wpTheme.srcFolder":         "ソースフォルダ（静的PHPプロジェクト）",
+        "wpTheme.selectFolder":      "選択",
+        "wpTheme.themeName":         "テーマ名",
+        "wpTheme.themeNamePlaceholder": "例：株式会社○○",
+        "wpTheme.archiveTypes":      "投稿タイプと表示件数",
+        "wpTheme.addType":           "+ 投稿タイプを追加",
+        "wpTheme.postalLabel":       "CF7郵便番号ページ",
+        "wpTheme.postalHint":        "スラッグをカンマ区切りで入力（例：contact, confirm）",
+        "wpTheme.destFolder":        "保存先フォルダ",
+        "wpTheme.createBtn":         "WPテーマを生成",
+        "wpTheme.errorNoSrc":        "ソースフォルダを選択してください。",
+        "wpTheme.errorNoName":       "テーマ名を入力してください。",
+        "wpTheme.errorNoDest":       "保存先フォルダを選択してください。",
+        "wpTheme.generating":        "テーマを生成中...",
+        "wpTheme.done":              "テーマを作成しました: ",
+        "wpTheme.typePlaceholder":   "投稿タイプ（例：blog）",
+        "wpTheme.countPlaceholder":  "件数/ページ",
+
+        "template.errorNoTitle":     "ページタイトルを入力してください。",
+        "template.errorNoFolder":    "フォルダ名を入力してください。",
+        "template.errorNoDest":      "保存先フォルダを選択してください。",
+        "template.creating":         "プロジェクトを作成中...",
+        "template.done":             "プロジェクトを作成しました: ",
+
+        "common.error":              "エラー: ",
+        "common.errorSelect":        "選択エラー: ",
+        "common.selectingDest":      "保存先フォルダを選択中...",
+        "common.downloadCancelled":  "ダウンロードをキャンセルしました。",
+        "common.savedTo":            "保存先: ",
+        "common.folderSelected":     "フォルダ: ",
+        "common.fileSelected":       "ファイル: ",
+        "common.filesSelected":      " 個のファイルが選択されました。",
+        "common.noSvgFiles":         ".svgファイルが見つかりません。",
+        "common.noPhpFiles":         ".phpファイルが見つかりません。",
+
+        "webp.noImages":             "画像が見つかりません（.jpg, .jpeg, .png）。",
+        "webp.converting":           "画像を変換中...",
+        "webp.done":                 "完了！",
+        "webp.downloadDone":         "ダウンロード完了！",
+
+        "minify.minifying":          "ファイルを圧縮中...",
+        "minify.done":               " 個のファイルを圧縮しました！",
+        "minify.filesSelected":      " 個のファイルが選択されました。",
+        "minify.savedTo":            "ダウンロード先: ",
+
+        "svgFill.colorRequired":     "塗り（fill）または線（stroke）を入力してください。",
+        "svgFill.applying":          "適用中: ",
+        "svgFill.done":              " 個のファイルを処理しました！",
+
+        "svg.optimizing":            "SVGを最適化中...",
+        "svg.done":                  " 個のSVGを最適化しました！ ",
+
+        "beautify.noFiles":          ".jsまたは.cssファイルが見つかりません。",
+        "beautify.beautifying":      "ファイルを整形中...",
+        "beautify.done":             " 個のファイルを整形しました！",
+
+        "wp.folderSelected":         "フォルダ: ",
+        "wp.fileSelected":           "ファイル: ",
+        "wp.noPhpFiles":             ".phpファイルが見つかりません。",
+        "wp.converting":             "ファイルを変換中...",
+        "wp.done":                   "完了！",
+    }
+};
+
+let currentLang = "jp";
+
+function applyLanguage(lang) {
+    currentLang = lang;
+
+    // Actualizar botones de idioma
+    document.querySelectorAll(".langBtn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+    });
+
+    // Traducir texto de elementos
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        const text = translations[lang][key];
+        if (text) el.textContent = text;
+    });
+
+    // Traducir placeholders
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        const text = translations[lang][key];
+        if (text) el.placeholder = text;
+    });
+}
+
+function t(key) {
+    return translations[currentLang][key] || key;
+}
+
+// Inicializar al cargar
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".langBtn").forEach(btn => {
+        btn.addEventListener("click", () => applyLanguage(btn.dataset.lang));
+    });
+    applyLanguage("jp");
+});

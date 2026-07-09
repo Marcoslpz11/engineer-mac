@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>プラットインMultiApp</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <img src="../images/logo.svg" class="app-logo" alt="Platin logo">
+
+  <!-- Selector de idioma -->
+  <div class="lang-switcher">
+    <button class="langBtn" data-lang="en">EN</button>
+    <button class="langBtn active" data-lang="jp">JP</button>
+  </div>
+
+  <!-- Tabs + contenido -->
+  <div class="tabs-wrapper">
+  <div class="tabs">
+    <button class="tabButton active" data-tab="webpTab"     data-i18n="tab.webp">WebP</button>
+    <button class="tabButton"        data-tab="svgGroupTab"  data-i18n="tab.svgGroup">SVG</button>
+    <button class="tabButton"        data-tab="codeGroupTab" data-i18n="tab.codeGroup">Min / Beautify</button>
+    <button class="tabButton"        data-tab="wpGroupTab"   data-i18n="tab.wpGroup">WordPress</button>
+    <button class="tabButton"        data-tab="templateTab"  data-i18n="tab.template">Template</button>
+  </div>
+
+  <!-- Contenido WebP -->
+  <div class="tabContent active" id="webpTab">
+    <h1 data-i18n="webp.title">Convertir imágenes a WebP</h1>
+    <label>
+      <input type="checkbox" id="resizeToggle" checked> <span data-i18n="webp.resize">Activar cambio de tamaño</span>
+    </label>
+    <label>
+      <input type="checkbox" id="keepNameToggle"> <span data-i18n="webp.keepName">Mantener nombre original (sin extensión .webp)</span>
+    </label>
+    <label>
+      <span data-i18n="webp.quality">Calidad WebP</span>: <span id="qualityValue">90</span>%
+      <input type="range" id="qualitySlider" min="0" max="100" value="90">
+    </label>
+    <input type="number" id="maxWidth" data-i18n-placeholder="webp.maxWidth" placeholder="Ancho máximo (px)" value="2048">
+    <br><br>
+    <button id="selectFolder" data-i18n="webp.selectBtn">Seleccionar carpeta</button>
+    <button id="convertBtn" disabled data-i18n="webp.convertBtn">Convertir a WebP</button>
+    <button id="downloadBtn" disabled data-i18n="webp.downloadBtn">Descargar WebP</button>
+    <p id="selectedInfo"></p>
+    <p id="status"></p>
+    <div id="previewContainer"></div>
+  </div>
+
+  <!-- Grupo SVG -->
+  <div class="tabContent" id="svgGroupTab">
+    <div class="subTabs">
+      <button class="subTabButton active" data-subtab="svgTab"     data-i18n="tab.svg">Optimizar SVG</button>
+      <button class="subTabButton"        data-subtab="svgFillTab" data-i18n="tab.svgFill">Colores SVG</button>
+    </div>
+
+    <div class="subTabContent active" id="svgTab">
+      <h1 data-i18n="svg.title">Optimizar SVG</h1>
+      <p data-i18n="svg.desc">Selecciona archivos <code>.svg</code> para reducir su peso. Los archivos se reemplazan en el sitio original.</p>
+      <button id="selectSvgFiles" data-i18n="common.selectFiles">Seleccionar archivos</button>
+      <button id="svgOptimizeBtn" disabled data-i18n="svg.optimizeBtn">Optimizar</button>
+      <p id="svgStatus"></p>
+      <ul id="svgFileList"></ul>
+    </div>
+
+    <div class="subTabContent" id="svgFillTab">
+      <h1 data-i18n="svgFill.title">Cambiar colores SVG</h1>
+      <p data-i18n="svgFill.desc">Deja un campo vacío para mantener el valor original.</p>
+      <label class="color-picker-label">
+        <span data-i18n="svgFill.fill">Fill</span>:
+        <input type="color" id="svgFillColor" value="#000000">
+        <input type="text" id="svgFillHex" data-i18n-placeholder="svgFill.emptyHint" placeholder="vacío = sin cambios" maxlength="7">
+        <button id="svgFillClear" type="button">✕</button>
+      </label>
+      <br>
+      <label class="color-picker-label">
+        <span data-i18n="svgFill.stroke">Stroke</span>:
+        <input type="color" id="svgStrokeColor" value="#000000">
+        <input type="text" id="svgStrokeHex" data-i18n-placeholder="svgFill.emptyHint" placeholder="vacío = sin cambios" maxlength="7">
+        <button id="svgStrokeClear" type="button">✕</button>
+      </label>
+      <br><br>
+      <label class="color-picker-label">
+        <span data-i18n="svgFill.rename">Nombre</span>: <input type="text" id="svgRenameName" data-i18n-placeholder="svgFill.renamePlaceholder" placeholder="vacío = nombre original">
+      </label>
+      <br>
+      <button id="selectSvgFillFiles" data-i18n="common.selectFiles">Seleccionar archivos</button>
+      <button id="svgFillBtn" disabled data-i18n="svgFill.applyBtn">Cambiar color</button>
+      <button id="downloadSvgFillBtn" disabled data-i18n="common.downloadBtn">Descargar archivos</button>
+      <p id="svgFillStatus"></p>
+      <ul id="svgFillFileList"></ul>
+    </div>
+  </div>
+
+  <!-- Grupo Min / Beautify -->
+  <div class="tabContent" id="codeGroupTab">
+    <div class="subTabs">
+      <button class="subTabButton active" data-subtab="minifyTab"   data-i18n="tab.minify">Minimizar</button>
+      <button class="subTabButton"        data-subtab="beautifyTab" data-i18n="tab.beautify">Formatear</button>
+    </div>
+
+    <div class="subTabContent active" id="minifyTab">
+      <h1 data-i18n="minify.title">Minimizar Archivos</h1>
+      <button id="selectFilesMin" data-i18n="common.selectFiles">Seleccionar archivos</button>
+      <button id="minifyBtn" disabled data-i18n="minify.minifyBtn">Minificar</button>
+      <button id="downloadMinBtn" disabled data-i18n="minify.downloadBtn">Descargar Minificados</button>
+      <p id="minifyStatus"></p>
+      <ul id="selectedMinFiles"></ul>
+    </div>
+
+    <div class="subTabContent" id="beautifyTab">
+      <h1 data-i18n="beautify.title">Formatear Archivos</h1>
+      <p data-i18n="beautify.desc">Selecciona archivos <code>.js</code> o <code>.css</code> minificados para embellecerlos.</p>
+      <button id="selectBeautifyFiles" data-i18n="common.selectFiles">Seleccionar archivos</button>
+      <button id="beautifyBtn" disabled data-i18n="beautify.beautifyBtn">Formatear</button>
+      <button id="downloadBeautifyBtn" disabled data-i18n="common.downloadBtn">Descargar archivos</button>
+      <p id="beautifyStatus"></p>
+      <ul id="beautifyFileList"></ul>
+    </div>
+  </div>
+
+  <!-- Grupo WordPress -->
+  <div class="tabContent" id="wpGroupTab">
+    <div class="subTabs">
+      <button class="subTabButton active" data-subtab="wpTab"      data-i18n="tab.wp">WP Convert</button>
+      <button class="subTabButton"        data-subtab="wpThemeTab" data-i18n="tab.wpTheme">WP Theme</button>
+    </div>
+
+    <div class="subTabContent active" id="wpTab">
+      <h1 data-i18n="wp.title">Convertir a WordPress</h1>
+      <p data-i18n="wp.desc">Selecciona una carpeta con archivos <code>.php</code> para convertirlos al formato de tema WordPress.</p>
+      <button id="selectWpFolder" data-i18n="common.selectFolder">Seleccionar carpeta</button>
+      <button id="wpConvertBtn" disabled data-i18n="wp.convertBtn">Convertir a WP</button>
+      <button id="wpDownloadBtn" disabled data-i18n="common.downloadBtn">Descargar archivos</button>
+      <p id="wpSelectedInfo"></p>
+      <p id="wpStatus"></p>
+      <ul id="wpFileList"></ul>
+    </div>
+
+    <div class="subTabContent" id="wpThemeTab">
+      <h1 data-i18n="wpTheme.title">Crear Tema WordPress</h1>
+      <div class="template-form">
+        <div class="form-group">
+          <span class="form-label" data-i18n="wpTheme.srcFolder">Carpeta fuente (proyecto PHP estático)</span>
+          <div class="folder-select-row">
+            <button id="wpThemeSelectSrc" data-i18n="wpTheme.selectFolder">Seleccionar</button>
+            <span id="wpThemeSrcPath" class="path-display"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <span class="form-label" data-i18n="wpTheme.themeName">Nombre del tema</span>
+          <input type="text" id="wpThemeName" data-i18n-placeholder="wpTheme.themeNamePlaceholder" placeholder="ej: 株式会社○○">
+        </div>
+        <div class="form-group">
+          <span class="form-label" data-i18n="wpTheme.archiveTypes">Post types y posts por página</span>
+          <div id="wpArchiveList" class="archive-list"></div>
+          <button id="wpAddArchiveRow" class="btn-secondary" data-i18n="wpTheme.addType">+ Añadir post type</button>
+        </div>
+        <div class="form-group">
+          <span class="form-label" data-i18n="wpTheme.postalLabel">Páginas con CF7 código postal</span>
+          <p class="form-hint" data-i18n="wpTheme.postalHint">Slugs separados por coma (ej: contact, confirm)</p>
+          <input type="text" id="wpPostalPages" placeholder="contact, confirm">
+        </div>
+        <div class="form-group">
+          <span class="form-label" data-i18n="wpTheme.destFolder">Carpeta de destino</span>
+          <div class="folder-select-row">
+            <button id="wpThemeSelectDest" data-i18n="template.selectDest">Seleccionar</button>
+            <span id="wpThemeDestPath" class="path-display"></span>
+          </div>
+        </div>
+        <div>
+          <button id="wpThemeCreateBtn" data-i18n="wpTheme.createBtn">Generar tema WP</button>
+        </div>
+        <p id="wpThemeStatus"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Creator -->
+  <div class="tabContent" id="templateTab">
+    <h1 data-i18n="template.title">Crear Proyecto desde Template</h1>
+    <div class="template-form">
+      <div class="form-group">
+        <span class="form-label" data-i18n="template.projectTitle">Título de la página</span>
+        <input type="text" id="templatePageTitle" data-i18n-placeholder="template.projectTitlePlaceholder" placeholder="Ejemplo: Empresa - Nombre del sitio">
+      </div>
+      <div class="form-group">
+        <span class="form-label" data-i18n="template.folderName">Nombre del nuevo folder</span>
+        <input type="text" id="templateFolderName" data-i18n-placeholder="template.folderNamePlaceholder" placeholder="ej: mi-proyecto">
+      </div>
+      <div class="form-group">
+        <span class="form-label" data-i18n="template.destination">Carpeta de destino</span>
+        <div class="folder-select-row">
+          <button id="templateSelectDest" data-i18n="template.selectDest">Seleccionar</button>
+          <span id="templateDestPath" class="path-display"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="form-label" data-i18n="template.libraries">Librerías</span>
+        <div class="libs-grid">
+          <label><input type="checkbox" id="libSwiper"> Swiper</label>
+          <label><input type="checkbox" id="libSplide"> Splide</label>
+          <label><input type="checkbox" id="libGsap"> GSAP</label>
+          <label><input type="checkbox" id="libScrollTrigger"> ScrollTrigger</label>
+          <label><input type="checkbox" id="libLenis"> Lenis</label>
+          <label><input type="checkbox" id="libThree"> Three.js</label>
+          <label><input type="checkbox" id="libScrollHint"> scroll-hint</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="form-label" data-i18n="template.typesquareLabel">Typesquare</span>
+        <label><input type="checkbox" id="libTypesquare"> <span data-i18n="template.typesquare">Incluir script de Typesquare en el header</span></label>
+      </div>
+      <div>
+        <button id="templateCreateBtn" data-i18n="template.createBtn">Crear Proyecto</button>
+      </div>
+      <p id="templateStatus"></p>
+    </div>
+  </div>
+
+  </div> <!-- /tabs-wrapper -->
+
+  <script src="i18n.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

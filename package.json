@@ -1,0 +1,47 @@
+{
+	"name": "webp-converter",
+	"version": "0.1.0",
+	"main": "main.js",
+	"scripts": {
+		"start": "electron .",
+		"dist": "electron-builder"
+	},
+	"build": {
+		"appId": "com.platin.engineer",
+		"productName": "Engineer",
+		"asar": false,
+		"files": [
+			"**/*",
+			"!template/template_code"
+		],
+		"extraResources": [
+			{
+				"from": "template/template_code",
+				"to": "template/template_code"
+			}
+		],
+		"mac": {
+			"category": "public.app-category.productivity",
+			"icon": "images/logo.icns",
+			"target": [
+				{
+					"target": "dmg",
+					"arch": ["arm64", "x64"]
+				}
+			]
+		}
+	},
+	"devDependencies": {
+		"electron": "^25.9.8",
+		"electron-builder": "^24.0.0",
+		"electron-rebuild": "^3.2.9"
+	},
+	"dependencies": {
+		"clean-css": "^5.3.3",
+		"js-beautify": "^1.15.4",
+		"sass": "^1.93.2",
+		"sharp": "^0.34.4",
+		"svgo": "^4.0.1",
+		"terser": "^5.44.0"
+	}
+}

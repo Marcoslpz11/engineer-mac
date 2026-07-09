@@ -1,0 +1,683 @@
+/* === Background: floating geometric shapes for engineers === */
+
+@keyframes floatA {
+	0%   { transform: translateY(0px) rotate(0deg); opacity: 0.07; }
+	50%  { transform: translateY(-30px) rotate(180deg); opacity: 0.12; }
+	100% { transform: translateY(0px) rotate(360deg); opacity: 0.07; }
+}
+@keyframes floatB {
+	0%   { transform: translateY(0px) rotate(45deg); opacity: 0.05; }
+	50%  { transform: translateY(25px) rotate(225deg); opacity: 0.1; }
+	100% { transform: translateY(0px) rotate(405deg); opacity: 0.05; }
+}
+@keyframes floatC {
+	0%   { transform: translate(0, 0) rotate(0deg); opacity: 0.06; }
+	33%  { transform: translate(20px, -20px) rotate(120deg); opacity: 0.1; }
+	66%  { transform: translate(-15px, 10px) rotate(240deg); opacity: 0.07; }
+	100% { transform: translate(0, 0) rotate(360deg); opacity: 0.06; }
+}
+@keyframes gridScroll {
+	0%   { background-position: 0 0; }
+	100% { background-position: 40px 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body::before { animation: none; }
+	body::after  { animation: none; }
+	.bg-shape1, .bg-shape2, .bg-shape3 { animation: none; }
+	.tabContent.active { animation: none; }
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	font-family: sans-serif;
+	background-color: #f7f9fc;
+	color: #1a2333;
+	height: 100vh;
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	padding: 16px 20px 0;
+	box-sizing: border-box;
+}
+
+/* Dot grid scrolling subtly */
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -2;
+	background-image: radial-gradient(circle, #a0b8d0 1px, transparent 1px);
+	background-size: 40px 40px;
+	animation: gridScroll 8s linear infinite;
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+/* Floating shape 1 — large diamond */
+body::after {
+	content: "";
+	position: fixed;
+	width: 220px;
+	height: 220px;
+	top: 8%;
+	right: 6%;
+	z-index: -1;
+	border: 2px solid #2980b9;
+	transform: rotate(45deg);
+	opacity: 0.07;
+	pointer-events: none;
+	animation: floatA 14s ease-in-out infinite;
+}
+
+/* Floating shape 2 — circle outline */
+body .bg-shape1 {
+	position: fixed;
+	width: 160px;
+	height: 160px;
+	bottom: 12%;
+	left: 5%;
+	z-index: -1;
+	border: 2px solid #2980b9;
+	border-radius: 50%;
+	opacity: 0.07;
+	pointer-events: none;
+	animation: floatB 18s ease-in-out infinite;
+}
+
+/* Floating shape 3 — small square */
+body .bg-shape2 {
+	position: fixed;
+	width: 80px;
+	height: 80px;
+	top: 50%;
+	left: 50%;
+	z-index: -1;
+	border: 2px solid #1a6fa8;
+	opacity: 0.06;
+	pointer-events: none;
+	animation: floatC 22s ease-in-out infinite;
+}
+
+/* Floating shape 4 — triangle via clip-path */
+body .bg-shape3 {
+	position: fixed;
+	width: 120px;
+	height: 120px;
+	bottom: 20%;
+	right: 15%;
+	z-index: -1;
+	background: transparent;
+	border: 2px solid #2980b9;
+	clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+	opacity: 0.06;
+	pointer-events: none;
+	animation: floatA 20s ease-in-out infinite reverse;
+}
+
+  .app-logo {
+	position: absolute;
+	top: 16px;
+	left: 20px;
+	height: 36px;
+	width: auto;
+	opacity: 0.85;
+  }
+
+  .tabs-wrapper {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+	margin-top: 52px;
+  }
+
+  .lang-switcher {
+	display: flex;
+	gap: 6px;
+	margin-bottom: 16px;
+	margin-left: auto;
+  }
+
+  @keyframes metalShine {
+	0%   { background-position: 0% 50%; }
+	50%  { background-position: 100% 50%; }
+	100% { background-position: 0% 50%; }
+  }
+
+  .langBtn {
+	padding: 4px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background: #f5f5f5;
+	cursor: pointer;
+	font-size: 12px;
+	font-weight: bold;
+  }
+
+  .langBtn.active {
+	background: #3498db;
+	color: white;
+	border-color: #3498db;
+  }
+  
+  .switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+	margin-right: 10px;
+  }
+  
+  .switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+  }
+  
+  .slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0; left: 0;
+	right: 0; bottom: 0;
+	background-color: #ccc;
+	transition: 0.4s;
+	border-radius: 34px;
+  }
+  
+  .slider:before {
+	position: absolute;
+	content: "";
+	height: 26px; width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	transition: 0.4s;
+	border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+	background-color: #4caf50;
+  }
+  
+  input:checked + .slider:before {
+	transform: translateX(26px);
+  }
+  
+  label {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+  }
+  
+  #previewContainer {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 20px;
+  }
+  
+  .previewImage {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	border: 2px solid #ccc;
+	border-radius: 5px;
+	position: relative;
+  }
+  
+  .previewImage.resize {
+	border-color: #4caf50;
+  }
+  
+  @keyframes tabEnter {
+	from { opacity: 0; transform: translateY(8px); }
+	to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .tabContent { display: none; }
+  .tabContent.active {
+	display: block;
+	height: fit-content;
+	max-height: 100%;
+	overflow-y: auto;
+	animation: tabEnter 0.22s ease;
+	background: rgba(255, 255, 255, 0.82);
+	backdrop-filter: blur(8px);
+	border: 1px solid #c8d8ea;
+	border-top: none;
+	border-radius: 0 0 8px 8px;
+	padding: 28px 32px;
+	box-shadow: 0 4px 20px rgba(41, 128, 185, 0.08);
+	box-sizing: border-box;
+  }
+
+  .tabContent h1 {
+	font-size: 18px;
+	font-weight: 700;
+	color: #1a3a5c;
+	margin: 0 0 20px 0;
+	padding-bottom: 10px;
+	border-bottom: 2px solid #2980b9;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+  }
+
+  .tabContent p {
+	font-size: 13px;
+	color: #4a6080;
+	margin: 6px 0;
+  }
+
+  /* === Action buttons === */
+  .tabContent button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 18px;
+	border: none;
+	border-radius: 4px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+	margin-right: 8px;
+	margin-bottom: 4px;
+  }
+
+  .tabContent button:not(:disabled) {
+	background: linear-gradient(135deg, #1b5e8c, #2980b9);
+	color: white;
+	box-shadow: 0 2px 6px rgba(41, 128, 185, 0.3);
+  }
+
+  .tabContent button:not(:disabled):hover {
+	background: linear-gradient(135deg, #1a6fa8, #3498db);
+	box-shadow: 0 4px 12px rgba(41, 128, 185, 0.45);
+	transform: translateY(-1px);
+  }
+
+  .tabContent button:not(:disabled):active {
+	transform: translateY(0);
+	box-shadow: 0 1px 4px rgba(41, 128, 185, 0.3);
+  }
+
+  .tabContent button:disabled {
+	background: #dce6f0;
+	color: #9ab0c8;
+	cursor: not-allowed;
+	box-shadow: none;
+  }
+
+  /* === Inputs === */
+  .tabContent input[type="number"],
+  .tabContent input[type="text"] {
+	padding: 7px 12px;
+	border: 1px solid #b0c8e0;
+	border-radius: 4px;
+	font-size: 13px;
+	color: #1a3a5c;
+	background: #f0f6fc;
+	outline: none;
+	transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .tabContent input[type="number"]:focus,
+  .tabContent input[type="text"]:focus {
+	border-color: #2980b9;
+	box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.15);
+	background: white;
+  }
+
+  /* === Range slider === */
+  .tabContent input[type="range"] {
+	-webkit-appearance: none;
+	appearance: none;
+	height: 4px;
+	border-radius: 2px;
+	background: #c0d8ee;
+	outline: none;
+	margin: 0 10px;
+	vertical-align: middle;
+	cursor: pointer;
+  }
+
+  .tabContent input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #1b5e8c, #2980b9);
+	box-shadow: 0 1px 4px rgba(41, 128, 185, 0.4);
+	cursor: pointer;
+	transition: transform 0.15s;
+  }
+
+  .tabContent input[type="range"]::-webkit-slider-thumb:hover {
+	transform: scale(1.2);
+  }
+
+  /* === Checkboxes === */
+  .tabContent input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	accent-color: #2980b9;
+	cursor: pointer;
+  }
+
+  /* === File lists === */
+  .tabContent ul {
+	list-style: none;
+	padding: 0;
+	margin: 12px 0 0 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+  }
+
+  .tabContent ul li {
+	font-family: 'Menlo', 'Consolas', monospace;
+	font-size: 12px;
+	color: #2c4a6a;
+	background: #eef4fa;
+	border: 1px solid #c8d8ea;
+	border-left: 3px solid #2980b9;
+	border-radius: 3px;
+	padding: 5px 10px;
+  }
+
+  /* === Status messages === */
+  p#status, p#minifyStatus, p#svgStatus, p#beautifyStatus,
+  p#wpStatus, p#svgFillStatus, p#wpSelectedInfo, p#selectedInfo {
+	font-family: 'Menlo', 'Consolas', monospace;
+	font-size: 12px;
+	color: #1a6fa8;
+	background: #eef4fa;
+	border: 1px solid #c8d8ea;
+	border-radius: 4px;
+	padding: 6px 12px;
+	margin-top: 10px;
+	min-height: 28px;
+  }
+
+  /* === Color picker row === */
+  .color-picker-label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 8px;
+  }
+
+  .color-picker-label span {
+	font-size: 13px;
+	font-weight: 600;
+	color: #1a3a5c;
+	min-width: 48px;
+  }
+
+  .color-picker-label input[type="color"] {
+	width: 36px;
+	height: 32px;
+	border: 1px solid #b0c8e0;
+	border-radius: 4px;
+	padding: 2px;
+	cursor: pointer;
+	background: white;
+  }
+
+  .color-picker-label button {
+	padding: 5px 10px !important;
+	margin: 0 !important;
+	background: #dce6f0 !important;
+	color: #4a6080 !important;
+	box-shadow: none !important;
+	font-size: 12px !important;
+  }
+
+  .color-picker-label button:hover {
+	background: #c8d8ea !important;
+	transform: none !important;
+  }
+
+  /* === Code tags === */
+  .tabContent code {
+	font-family: 'Menlo', 'Consolas', monospace;
+	font-size: 12px;
+	background: #ddeaf6;
+	color: #1a5a8c;
+	padding: 1px 5px;
+	border-radius: 3px;
+  }
+  
+  .tabs {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+	flex-shrink: 0;
+  }
+  .tabButton {
+	width: calc(100% / 5);
+	height: 50px;
+	font-size: 16px;
+	border: none;
+	border-right: 1px solid rgba(0,0,0,0.06);
+	position: relative;
+	background: #dde8f2;
+	color: #1a3a5c;
+	font-weight: bold;
+	cursor: pointer;
+	transition: filter 0.2s, box-shadow 0.2s;
+  }
+
+  .tabButton:hover {
+	filter: brightness(1.2);
+  }
+
+  /* === Sub-tabs === */
+  .subTabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #c8d8ea;
+  }
+
+  .subTabButton {
+    padding: 8px 24px;
+    border: none;
+    background: transparent;
+    color: #4a6080;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .subTabButton:hover {
+    color: #1a3a5c;
+  }
+
+  .subTabButton.active {
+    color: #2980b9;
+    border-bottom-color: #2980b9;
+  }
+
+  .subTabContent {
+    display: none;
+  }
+
+  .subTabContent.active {
+    display: block;
+  }
+
+  /* === Template Creator === */
+  .template-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 620px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a3a5c;
+  }
+
+  .template-form input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .folder-select-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .folder-select-row button {
+    flex-shrink: 0;
+  }
+
+  .path-display {
+    font-family: 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    color: #2c4a6a;
+    background: #eef4fa;
+    border: 1px solid #c8d8ea;
+    border-radius: 4px;
+    padding: 5px 10px;
+    flex: 1;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .libs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .libs-grid label {
+    background: #eef4fa;
+    border: 1px solid #c8d8ea;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 0;
+    gap: 8px;
+    font-size: 13px;
+    color: #1a3a5c;
+    font-weight: 500;
+  }
+
+  .libs-grid label:hover {
+    background: #ddeaf6;
+  }
+
+  .form-hint {
+    font-size: 12px;
+    color: #6a86a0;
+    margin: 0;
+  }
+
+  .archive-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .archive-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .archive-row .archive-type {
+    flex: 2;
+  }
+
+  .archive-row .archive-count {
+    flex: 1;
+  }
+
+  .archive-remove-btn {
+    padding: 5px 10px !important;
+    margin: 0 !important;
+    background: #dce6f0 !important;
+    color: #4a6080 !important;
+    box-shadow: none !important;
+    font-size: 12px !important;
+    flex-shrink: 0;
+  }
+
+  .archive-remove-btn:hover {
+    background: #c8d8ea !important;
+    transform: none !important;
+  }
+
+  .btn-secondary {
+    background: #eef4fa !important;
+    color: #1a6fa8 !important;
+    border: 1px solid #b0c8e0 !important;
+    box-shadow: none !important;
+    font-size: 12px !important;
+  }
+
+  .btn-secondary:hover {
+    background: #ddeaf6 !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  p#wpThemeStatus {
+    font-family: 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    color: #1a6fa8;
+    background: #eef4fa;
+    border: 1px solid #c8d8ea;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-top: 4px;
+    min-height: 28px;
+  }
+
+  p#templateStatus {
+    font-family: 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    color: #1a6fa8;
+    background: #eef4fa;
+    border: 1px solid #c8d8ea;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-top: 4px;
+    min-height: 28px;
+  }
+
+  .tabButton.active {
+	background: linear-gradient(135deg, #0d2a47, #2980b9, #0a4a80, #54b4f0, #0d2a47);
+	background-size: 300% 300%;
+	animation: metalShine 2s ease infinite;
+	color: white;
+	box-shadow: inset 0 -3px 0 #54b4f0, 0 0 12px rgba(41,128,185,0.5);
+  }
+  

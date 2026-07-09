@@ -1,0 +1,15 @@
+@charset "utf-8";
+@use "../foundation/mixin" as m;
+@use "../foundation/color" as c;
+
+.l-footer {
+  position: relative;
+  background-color: #000;
+}
+
+.l-footer__copy {
+  text-align: center;
+  small {
+    color: #fff;
+  }
+}

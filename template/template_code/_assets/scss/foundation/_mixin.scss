@@ -1,0 +1,95 @@
+@charset "utf-8";
+@use "sass:map";
+// ブレイクポイント
+// -----------------------------------------
+$breakpoints: ("sm-se": "screen and (max-width: 350px)",
+    "sm-s": "screen and (max-width: 370px)",
+    "xr": "screen and (max-width: 480px) and (min-height: 700px)",
+    "sm": "screen and (max-width: 500px)",
+    "s-t": "screen and (max-width: 650px)",
+    "tab": "screen and (max-width: 810px)",
+    "tab-p": "screen and (max-width: 850px)",
+    "pc-s": "screen and (max-width: 980px)",
+    "tab-l": "screen and (max-width: 1080px)",
+    "hover": "screen and (min-width: 1025px)",
+    "note": "screen and (max-width: 1200px)",
+    "pc12": "screen and (max-height: 600px) and (min-width: 1081px)",
+    "pc13": "screen and (max-height: 660px) and (min-width: 1081px)",
+    "lets": "screen and (max-height: 760px) and (min-width: 1081px)",
+    "pc-l": "screen and (max-height: 850px) and (min-width: 1081px) ",
+    "mac": "screen and (max-width: 1280px)",
+  );
+@mixin mq($breakpoint: tab-l) {
+  @media #{map.get($breakpoints, $breakpoint)} {
+    @content;
+  }
+}
+// object-fit:cover
+// -----------------------------------------
+@mixin image100 {
+  picture,
+  source,
+  img {
+    @include object-fit(cover);
+    height: 100%;
+    width: 100%;
+  }
+}
+// css properties
+// -----------------------------------------
+@mixin centerX {
+  left: 50%;
+  transform: translateX(-50%);
+}
+@mixin centerY {
+  top: 50%;
+  transform: translateY(-50%);
+}
+@mixin center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+@mixin filter {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+@mixin bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+@mixin flexCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@mixin bgCover {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+@mixin bgContain {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+//1行
+@mixin textOver {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+//複数行
+@mixin textOver2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}

@@ -1,0 +1,76 @@
+@charset "utf-8";
+@use "../foundation/mixin" as m;
+@use "../foundation/color" as c;
+.c-button {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+  background-color: #313131;
+  transition: background-color 0.3s;
+  &.--center {
+    display: table;
+    margin: auto;
+  }
+  &:hover {
+    background-color: #fff;
+  }
+}
+//swiper
+//スライド１枚の時や最初と最後をクリックできない見た目にする
+.swiper-button-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.c-buttonPrev,
+.c-buttonNext {
+  position: relative;
+  // position: absolute;
+  //   top: 50%;
+  display: inline-block;
+  width: 65px;
+  height: 65px;
+  // border: 1px solid #000;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  // transition: background-color 0.3s, border 0.3s;
+  @include m.mq(tab-l) {
+    width: 60px;
+    height: 60px;
+  }
+  @include m.mq(tab) {
+    width: 50px;
+    height: 50px;
+  }
+  @include m.mq(sm) {
+    top: 45%;
+    width: 45px;
+    height: 45px;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    left: 35%;
+    width: 10px;
+    height: 10px;
+    border: 1px solid;
+    border-color: #000 #000 transparent transparent;
+    @include m.mq(sm) {
+      left: 30%;
+    }
+  }
+  &:hover {
+    background-color: #000;
+    &::before {
+      border-color: #fff #fff transparent transparent;
+    }
+  }
+}
+.c-buttonPrev {
+  left: 0;
+  transform: scale(-1, 1);
+}
+.c-buttonNext {
+  right: 0;
+}

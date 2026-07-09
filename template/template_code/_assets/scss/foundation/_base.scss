@@ -1,0 +1,136 @@
+@charset "utf-8";
+@use "mixin" as m;
+//Google Fonts @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+// fontファイル内のもの @font-face {
+//   font-family: "KizaKinryou";
+//   src: url("../font/kizakinryou.woff") format("woff");
+//   src: url("../font/kizakinryou.woff2") format("woff2");
+//   font-display: swap;
+// }
+* {
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  box-sizing: border-box;
+  color: #000;
+  -webkit-appearance: none;
+  @include m.mq(tab) {
+    line-height: 1.65;
+  }
+}
+.preload * {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
+html {
+  width: 100%;
+  /* ルートのフォントサイズを10pxに設定 */
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+  @include m.mq(tab-l) {
+    font-size: 61.5%;
+  }
+  @include m.mq(tab) {
+    font-size: 54.6%;
+  }
+  &.fadeout {
+    opacity: 0;
+  }
+}
+body {
+  margin: 0px;
+  overflow: hidden;
+  /* ルートのフォントサイズを1.6em（16pxと同等のサイズ）に設定 */
+  font-size: 1.6em;
+  font-weight: bold;
+  font-family: "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+    "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic", "メイリオ", sans-serif;
+  opacity: 0;
+  transition: opacity 0.5s;
+  &.is-loaded {
+    opacity: 1;
+  }
+}
+select,
+option,
+span {
+  font-family: "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+    "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic", "メイリオ", sans-serif;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+    "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic", "メイリオ", sans-serif;
+  span {
+    font-family: "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+      "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic", "メイリオ",
+      sans-serif;
+  }
+}
+a {
+  color: #000;
+  text-decoration: none;
+  transition: 0.4s;
+}
+@media print {
+  a[href]:after {
+      content: none !important;
+  }
+}
+a[href*="tel:"] {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  @include m.mq(sm) {
+    pointer-events: all;
+    cursor: auto;
+  }
+}
+p {
+  font-family: "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+    "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic", "メイリオ", sans-serif;
+}
+input[type="text"],
+textarea {
+  -webkit-appearance: none;
+  border: none;
+  font-family: sans-serif;
+}
+textarea {
+  resize: none;
+  font-family: sans-serif;
+}
+button,
+select,
+input,
+a {
+  @include m.mq(tab-l) {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+button,
+select,
+input,
+input[type="submit"] {
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  font-family: "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+    "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic", "メイリオ", sans-serif;
+}
+select::-ms-expand {
+  display: none;
+}
+img {
+  display: block;
+  height: auto;
+}
+section {
+  position: relative;
+}
