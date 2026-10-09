@@ -6,6 +6,10 @@ on:
     tags:
       - "v*"
 
+# Necesario para que GITHUB_TOKEN pueda crear la release (subir los artefactos)
+permissions:
+  contents: write
+
 jobs:
   release-mac:
     # Fijado a macos-15 (Apple Silicon): macos-latest pasó a macOS 26 y
