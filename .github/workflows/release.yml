@@ -1,0 +1,52 @@
+name: Release
+
+# Se ejecuta al subir un tag de versión, p.ej. v0.1.1
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build & publish (macOS)
+        run: npm run release
+        env:
+          # Publicación en GitHub Releases
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Firma de código (certificado "Developer ID Application" en base64)
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          # Notarización con Apple
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+  # ------------------------------------------------------------------
+  # Windows: se activará desde el otro ordenador (donde están los
+  # archivos de la versión Windows). Descomenta este job cuando el
+  # código de Windows esté en el repositorio.
+  # ------------------------------------------------------------------
+  # release-win:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #     - run: npm ci
+  #     - run: npm run release
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

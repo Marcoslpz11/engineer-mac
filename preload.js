@@ -19,4 +19,13 @@ contextBridge.exposeInMainWorld("electronAPI", {
     selectSaveFolder: () => ipcRenderer.invoke("select-save-folder"),
     createWpTheme: (options) => ipcRenderer.invoke("create-wp-theme", options),
     createTemplate: (options) => ipcRenderer.invoke("create-template", options),
+
+    // Actualizaciones
+    updater: {
+        getVersion: () => ipcRenderer.invoke("updater:get-version"),
+        check: () => ipcRenderer.invoke("updater:check"),
+        download: () => ipcRenderer.invoke("updater:download"),
+        install: () => ipcRenderer.invoke("updater:install"),
+        onStatus: (callback) => ipcRenderer.on("updater:status", (_event, data) => callback(data)),
+    },
 });

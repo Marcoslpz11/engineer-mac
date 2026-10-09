@@ -2,6 +2,10 @@ const { app, BrowserWindow, ipcMain, dialog, nativeImage } = require("electron")
 const path = require("path");
 const fs = require("fs");
 
+// Se inicializa de forma diferida dentro de app.whenReady() (ver initAutoUpdater),
+// porque electron-updater necesita que la app de Electron ya esté lista.
+let autoUpdater = null;
+
 // Pre-load all modules at startup (avoids re-requiring on every IPC call)
 const { convertToWebp } = require(path.join(__dirname, "renderer", "modules", "convertWebp.js"));
 const { changeSvgColors } = require(path.join(__dirname, "renderer", "modules", "svgFill.js"));
@@ -46,7 +50,13 @@ app.whenReady().then(() => {
 		const icon = nativeImage.createFromPath(path.join(__dirname, "images", "logo.icns"));
 		if (!icon.isEmpty()) app.dock.setIcon(icon);
 	}
+	initAutoUpdater();
 	createWindow();
+
+	// Comprobar actualizaciones automáticamente al arrancar (solo en la app instalada)
+	if (app.isPackaged && autoUpdater) {
+		autoUpdater.checkForUpdates().catch(() => {});
+	}
 });
 
 app.on("window-all-closed", () => {
@@ -64,6 +74,54 @@ app.on("before-quit", async () => {
 			fs.promises.rm(dir, { recursive: true, force: true }).catch(() => {})
 		)
 	);
+});
+
+// ========================
+// Auto Updater
+// ========================
+function sendUpdateStatus(data) {
+	if (mainWindow && !mainWindow.isDestroyed()) {
+		mainWindow.webContents.send("updater:status", data);
+	}
+}
+
+function initAutoUpdater() {
+	autoUpdater = require("electron-updater").autoUpdater;
+	autoUpdater.autoDownload = false;           // No descargar hasta que el usuario pulse el botón
+	autoUpdater.autoInstallOnAppQuit = true;    // Si se descargó, instalar al cerrar la app
+
+	autoUpdater.on("checking-for-update", () => sendUpdateStatus({ state: "checking" }));
+	autoUpdater.on("update-available", (info) => sendUpdateStatus({ state: "available", version: info.version }));
+	autoUpdater.on("update-not-available", () => sendUpdateStatus({ state: "not-available" }));
+	autoUpdater.on("download-progress", (p) => sendUpdateStatus({ state: "progress", percent: Math.round(p.percent) }));
+	autoUpdater.on("update-downloaded", (info) => sendUpdateStatus({ state: "downloaded", version: info.version }));
+	autoUpdater.on("error", (err) => sendUpdateStatus({ state: "error", message: err == null ? "unknown" : (err.message || String(err)) }));
+}
+
+ipcMain.handle("updater:get-version", () => app.getVersion());
+
+ipcMain.handle("updater:check", async () => {
+	if (!app.isPackaged || !autoUpdater) return { dev: true };
+	try {
+		await autoUpdater.checkForUpdates();
+		return { ok: true };
+	} catch (err) {
+		return { error: err.message };
+	}
+});
+
+ipcMain.handle("updater:download", async () => {
+	if (!autoUpdater) return { error: "updater not ready" };
+	try {
+		await autoUpdater.downloadUpdate();
+		return { ok: true };
+	} catch (err) {
+		return { error: err.message };
+	}
+});
+
+ipcMain.handle("updater:install", () => {
+	if (autoUpdater) autoUpdater.quitAndInstall();
 });
 
 // ========================

@@ -760,3 +760,83 @@ downloadMinBtn.addEventListener("click", async () => {
 
     minifyStatus.textContent = t("minify.savedTo") + savedFiles[0];
 });
+
+// ========================
+// Actualizaciones (auto-updater)
+// ========================
+(function setupUpdater() {
+    const versionEl = document.getElementById("appVersion");
+    const checkBtn  = document.getElementById("checkUpdateBtn");
+    const banner    = document.getElementById("updateBanner");
+    const msgEl     = document.getElementById("updateMsg");
+    const actionBtn = document.getElementById("updateActionBtn");
+
+    if (!window.electronAPI || !window.electronAPI.updater) return;
+
+    // Mostrar versión actual
+    window.electronAPI.updater.getVersion().then((v) => {
+        versionEl.textContent = "v" + v;
+    });
+
+    function show(text) {
+        banner.classList.remove("hidden");
+        msgEl.textContent = text;
+    }
+    function hideAction() {
+        actionBtn.classList.add("hidden");
+        actionBtn.onclick = null;
+    }
+
+    // Botón "Buscar actualizaciones"
+    checkBtn.addEventListener("click", async () => {
+        show(t("update.checking"));
+        hideAction();
+        const r = await window.electronAPI.updater.check();
+        if (r && r.dev)        show(t("update.devMode"));
+        else if (r && r.error) show(t("update.error") + r.error);
+    });
+
+    // Eventos del proceso principal
+    window.electronAPI.updater.onStatus((data) => {
+        switch (data.state) {
+            case "checking":
+                show(t("update.checking"));
+                hideAction();
+                break;
+
+            case "not-available":
+                show(t("update.upToDate"));
+                hideAction();
+                break;
+
+            case "available":
+                show(t("update.available").replace("{v}", data.version));
+                actionBtn.classList.remove("hidden");
+                actionBtn.textContent = t("update.downloadBtn");
+                actionBtn.disabled = false;
+                actionBtn.onclick = async () => {
+                    actionBtn.disabled = true;
+                    const r = await window.electronAPI.updater.download();
+                    if (r && r.error) show(t("update.error") + r.error);
+                };
+                break;
+
+            case "progress":
+                show(t("update.downloading").replace("{p}", data.percent));
+                break;
+
+            case "downloaded":
+                show(t("update.ready").replace("{v}", data.version));
+                actionBtn.classList.remove("hidden");
+                actionBtn.textContent = t("update.installBtn");
+                actionBtn.disabled = false;
+                actionBtn.onclick = () => window.electronAPI.updater.install();
+                break;
+
+            case "error":
+                show(t("update.error") + (data.message || ""));
+                hideAction();
+                break;
+        }
+    });
+})();
