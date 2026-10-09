@@ -10,7 +10,7 @@ async function createTemplate({ templateSrc, projectName, destDir, title, librar
 
     try {
         await fs.promises.access(projectPath);
-        return { error: `La carpeta "${projectName}" ya existe en el destino.` };
+        return { errorKey: "error.folderExists", errorParams: { name: projectName } };
     } catch {}
 
     await fs.promises.cp(templateSrc, projectPath, { recursive: true });
@@ -19,7 +19,7 @@ async function createTemplate({ templateSrc, projectName, destDir, title, librar
     const headerPath = path.join(projectPath, 'header.php');
     let header = await fs.promises.readFile(headerPath, 'utf-8');
 
-    header = header.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`);
+    header = header.replace(/<title>[^<]*<\/title>/, `<title>${title}</title>\n\t<meta name="robots" content="noindex , nofollow" />`);
 
     if (!typesquare) header = removeLine(header, /typesquare\.com/);
     if (!libraries.swiper)  header = removeLine(header, /swiper-bundle\.min\.css/);
@@ -87,6 +87,10 @@ async function createTemplate({ templateSrc, projectName, destDir, title, librar
                 .map(name => fs.promises.rm(path.join(imagesDir, name), { recursive: true, force: true }))
         );
     } catch {}
+
+    // --- Asegurar que existan assets/images/top y assets/images/common ---
+    await fs.promises.mkdir(path.join(imagesDir, 'top'), { recursive: true }).catch(() => {});
+    await fs.promises.mkdir(path.join(imagesDir, 'common'), { recursive: true }).catch(() => {});
 
     return { success: true, path: projectPath };
 }

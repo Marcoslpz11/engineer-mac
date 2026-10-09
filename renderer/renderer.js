@@ -1,4 +1,23 @@
 // ========================
+// Helpers
+// ========================
+
+// Traduce el error devuelto por un módulo: si trae una clave i18n (errorKey)
+// la traduce según el idioma; si no, muestra el error crudo (p.ej. del sistema).
+function errMsg(result) {
+    if (result && result.errorKey) {
+        let m = t(result.errorKey);
+        if (result.errorParams) {
+            for (const [k, v] of Object.entries(result.errorParams)) {
+                m = m.replace("{" + k + "}", v);
+            }
+        }
+        return m;
+    }
+    return (result && result.error) || "";
+}
+
+// ========================
 // Variables y elementos UI
 // ========================
 
@@ -321,7 +340,7 @@ svgFillBtn.addEventListener("click", async () => {
     const result = await window.electronAPI.changeSvgFill(svgFillFiles, fillColor, strokeColor);
 
     if (result.error) {
-        svgFillStatus.textContent = t("common.error") + result.error;
+        svgFillStatus.textContent = t("common.error") + errMsg(result);
         svgFillBtn.disabled = false;
         return;
     }
@@ -393,7 +412,7 @@ svgOptimizeBtn.addEventListener("click", async () => {
     const result = await window.electronAPI.optimizeSvgs(svgSelectedFiles);
 
     if (result.error) {
-        svgStatus.textContent = t("common.error") + result.error;
+        svgStatus.textContent = t("common.error") + errMsg(result);
         svgOptimizeBtn.disabled = false;
         return;
     }
@@ -467,7 +486,7 @@ beautifyBtn.addEventListener("click", async () => {
     const result = await window.electronAPI.beautifyFiles(beautifySelectedFiles);
 
     if (result.error) {
-        beautifyStatus.textContent = t("common.error") + result.error;
+        beautifyStatus.textContent = t("common.error") + errMsg(result);
         beautifyBtn.disabled = false;
         return;
     }
@@ -554,7 +573,7 @@ wpConvertBtn.addEventListener("click", async () => {
     const result = await window.electronAPI.convertToWp(wpSelectedFiles);
 
     if (result.error) {
-        wpStatus.textContent = t("common.error") + result.error;
+        wpStatus.textContent = t("common.error") + errMsg(result);
         wpConvertBtn.disabled = false;
         return;
     }
@@ -666,7 +685,7 @@ wpThemeCreateBtn.addEventListener("click", async () => {
     wpThemeCreateBtn.disabled = false;
 
     if (result.error) {
-        wpThemeStatus.textContent = t("common.error") + result.error;
+        wpThemeStatus.textContent = t("common.error") + errMsg(result);
         return;
     }
 
@@ -744,7 +763,7 @@ templateCreateBtn.addEventListener("click", async () => {
     templateCreateBtn.disabled = false;
 
     if (result.error) {
-        templateStatus.textContent = t("common.error") + result.error;
+        templateStatus.textContent = t("common.error") + errMsg(result);
         return;
     }
 
@@ -848,6 +867,48 @@ downloadMinBtn.addEventListener("click", async () => {
                 show(t("update.error") + (data.message || ""), 7000);
                 hideAction();
                 break;
+        }
+    });
+})();
+
+// ========================
+// Reporte de errores
+// ========================
+(function setupErrorReport() {
+    const msgEl      = document.getElementById("errorMessage");
+    const reporterEl = document.getElementById("errorReporter");
+    const btn        = document.getElementById("errorSubmitBtn");
+    const statusEl   = document.getElementById("errorStatus");
+
+    if (!btn || !window.electronAPI || !window.electronAPI.submitErrorReport) return;
+
+    btn.addEventListener("click", async () => {
+        const message = msgEl.value.trim();
+        if (!message) {
+            statusEl.textContent = t("error.empty");
+            return;
+        }
+
+        btn.disabled = true;
+        statusEl.textContent = t("error.sending");
+
+        const r = await window.electronAPI.submitErrorReport({
+            message,
+            reporter: reporterEl.value,
+        });
+
+        btn.disabled = false;
+
+        if (r && r.ok) {
+            statusEl.textContent = t("error.sent");
+            msgEl.value = "";
+            reporterEl.value = "";
+        } else if (r && (r.localOnly || r.sentFailedSavedLocal)) {
+            statusEl.textContent = t("error.failSaved");
+        } else if (r && r.error === "empty") {
+            statusEl.textContent = t("error.empty");
+        } else {
+            statusEl.textContent = t("error.fail");
         }
     });
 })();

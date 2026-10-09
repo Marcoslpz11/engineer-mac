@@ -787,3 +787,32 @@ body .bg-shape3 {
     opacity: 0.6;
     cursor: default;
   }
+
+/* ========================
+   Reporte de errores
+   ======================== */
+  #errorMessage {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 10px 12px;
+    border: 1px solid #c8d8ea;
+    border-radius: 6px;
+    resize: vertical;
+    min-height: 120px;
+    color: #1a2333;
+  }
+
+  #errorMessage:focus {
+    outline: none;
+    border-color: #2980b9;
+    box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.15);
+  }
+
+  #errorStatus {
+    font-size: 13px;
+    color: #1a6fa8;
+    min-height: 20px;
+    margin-top: 4px;
+  }

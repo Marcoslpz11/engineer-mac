@@ -35,6 +35,7 @@
     <button class="tabButton"        data-tab="codeGroupTab" data-i18n="tab.codeGroup">Min / Beautify</button>
     <button class="tabButton"        data-tab="wpGroupTab"   data-i18n="tab.wpGroup">WordPress</button>
     <button class="tabButton"        data-tab="templateTab"  data-i18n="tab.template">Template</button>
+    <button class="tabButton"        data-tab="errorTab"     data-i18n="tab.error">Submit an error</button>
   </div>
 
   <!-- Contenido WebP -->
@@ -228,6 +229,27 @@
         <button id="templateCreateBtn" data-i18n="template.createBtn">Crear Proyecto</button>
       </div>
       <p id="templateStatus"></p>
+    </div>
+  </div>
+
+  <!-- Reporte de errores -->
+  <div class="tabContent" id="errorTab">
+    <h1 data-i18n="error.title">Submit an error</h1>
+    <p data-i18n="error.desc">Describe the problem you found. Your report is sent to the developer.</p>
+    <div class="template-form">
+      <div class="form-group">
+        <span class="form-label" data-i18n="error.reporterLabel">Your name (optional)</span>
+        <input type="text" id="errorReporter" data-i18n-placeholder="error.reporterPlaceholder" placeholder="e.g. Marcos">
+      </div>
+      <div class="form-group">
+        <span class="form-label" data-i18n="error.messageLabel">Describe the error</span>
+        <textarea id="errorMessage" rows="7" data-i18n-placeholder="error.messagePlaceholder" placeholder="What happened? What were you doing when it failed?"></textarea>
+      </div>
+      <p class="form-hint" data-i18n="error.autoHint">The app version, your OS and the date are attached automatically.</p>
+      <div>
+        <button id="errorSubmitBtn" data-i18n="error.submitBtn">Send report</button>
+      </div>
+      <p id="errorStatus"></p>
     </div>
   </div>
 

@@ -23,8 +23,11 @@ const RE_TRAILING        = new RegExp(`href="(${wpBaseEscaped})([^"]*)"`, "g");
 const RE_PHP_EXT         = /\.php\b/g;
 const RE_HEAD_CLOSE      = /<\/head>/g;
 const RE_BODY_CLOSE      = /<\/body>/g;
+// Quita el meta robots noindex,nofollow (el sitio WP final sí debe indexarse)
+const RE_ROBOTS_META     = /[ \t]*<meta\s+name=["']robots["']\s+content=["']\s*noindex\s*,\s*nofollow\s*["']\s*\/?>\s*\r?\n?/gi;
 
 function applyReplacements(content) {
+    content = content.replace(RE_ROBOTS_META,      "");
     content = content.replace(RE_SRC_ASSETS,      `src="<?php echo get_template_directory_uri(); ?>/assets/`);
     content = content.replace(RE_URL_SQ,           `url('<?php echo get_template_directory_uri(); ?>/assets/`);
     content = content.replace(RE_URL_DQ,           `url("<?php echo get_template_directory_uri(); ?>/assets/`);
@@ -587,7 +590,7 @@ async function createWpTheme({ srcDir, destDir, themeName, archiveTypes, postalP
 
     try {
         await fs.promises.access(projectPath);
-        return { error: `La carpeta "${themeName}" ya existe en el destino.` };
+        return { errorKey: "error.folderExists", errorParams: { name: themeName } };
     } catch {}
 
     await fs.promises.mkdir(projectPath, { recursive: true });

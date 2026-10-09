@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
     selectSaveFolder: () => ipcRenderer.invoke("select-save-folder"),
     createWpTheme: (options) => ipcRenderer.invoke("create-wp-theme", options),
     createTemplate: (options) => ipcRenderer.invoke("create-template", options),
+    submitErrorReport: (data) => ipcRenderer.invoke("submit-error-report", data),
 
     // Actualizaciones
     updater: {

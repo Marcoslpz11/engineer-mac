@@ -1,6 +1,14 @@
 const { app, BrowserWindow, ipcMain, dialog, nativeImage } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const os = require("os");
+const https = require("https");
+
+// Endpoint del Worker de Cloudflare que crea los issues en GitHub.
+// Se rellena con la URL del Worker tras desplegarlo. Vacío = solo log local.
+const ERROR_REPORT_ENDPOINT = "https://engineer-error-reporter.marcos-49a.workers.dev";
+// Clave compartida simple (debe coincidir con el secret APP_KEY del Worker).
+const ERROR_REPORT_KEY = "7df736c922a65035b4c5e2dd52502b78";
 
 // Se inicializa de forma diferida dentro de app.whenReady() (ver initAutoUpdater),
 // porque electron-updater necesita que la app de Electron ya esté lista.
@@ -122,6 +130,79 @@ ipcMain.handle("updater:download", async () => {
 
 ipcMain.handle("updater:install", () => {
 	if (autoUpdater) autoUpdater.quitAndInstall();
+});
+
+// ========================
+// Reporte de errores
+// ========================
+function writeLocalErrorLog(entry) {
+	try {
+		const logPath = path.join(app.getPath("userData"), "error-reports.log");
+		fs.appendFileSync(logPath, JSON.stringify(entry) + "\n", "utf-8");
+		return logPath;
+	} catch (err) {
+		console.error("No se pudo escribir el log local:", err);
+		return null;
+	}
+}
+
+function postJson(endpoint, data, key) {
+	return new Promise((resolve, reject) => {
+		const body = JSON.stringify(data);
+		const u = new URL(endpoint);
+		const req = https.request({
+			hostname: u.hostname,
+			path: u.pathname + u.search,
+			port: u.port || 443,
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(body),
+				"X-App-Key": key,
+			},
+		}, (res) => {
+			let resp = "";
+			res.on("data", (c) => (resp += c));
+			res.on("end", () => {
+				if (res.statusCode >= 200 && res.statusCode < 300) resolve(resp);
+				else reject(new Error(`HTTP ${res.statusCode}: ${resp}`));
+			});
+		});
+		req.on("error", reject);
+		req.write(body);
+		req.end();
+	});
+}
+
+ipcMain.handle("submit-error-report", async (_event, { message, reporter } = {}) => {
+	const entry = {
+		message: (message || "").trim(),
+		reporter: (reporter || "").trim(),
+		version: app.getVersion(),
+		platform: process.platform,
+		osRelease: os.release(),
+		arch: process.arch,
+		timestamp: new Date().toISOString(),
+	};
+
+	if (!entry.message) return { error: "empty" };
+
+	// Guardar siempre una copia local (fallback)
+	const logPath = writeLocalErrorLog(entry);
+
+	// Sin endpoint configurado -> solo local
+	if (!ERROR_REPORT_ENDPOINT) {
+		return { localOnly: true, logPath };
+	}
+
+	// Enviar al Worker
+	try {
+		await postJson(ERROR_REPORT_ENDPOINT, entry, ERROR_REPORT_KEY);
+		return { ok: true };
+	} catch (err) {
+		console.error("Error enviando el reporte:", err);
+		return { sentFailedSavedLocal: true, logPath, detail: err.message };
+	}
 });
 
 // ========================

@@ -1,0 +1,12 @@
+name = "engineer-error-reporter"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+workers_dev = true
+
+# Variables NO secretas (el dueño/repo no son secretos).
+# El token (GH_TOKEN) y la clave (APP_KEY) se añaden como SECRETS:
+#   npx wrangler secret put GH_TOKEN
+#   npx wrangler secret put APP_KEY
+[vars]
+GH_OWNER = "Marcoslpz11"
+GH_REPO = "engineer-mac"
