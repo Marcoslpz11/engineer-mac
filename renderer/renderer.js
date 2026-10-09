@@ -879,8 +879,22 @@ downloadMinBtn.addEventListener("click", async () => {
     const reporterEl = document.getElementById("errorReporter");
     const btn        = document.getElementById("errorSubmitBtn");
     const statusEl   = document.getElementById("errorStatus");
+    const fab        = document.getElementById("errorFab");
+    const modal      = document.getElementById("errorModal");
+    const closeBtn   = document.getElementById("errorModalClose");
 
     if (!btn || !window.electronAPI || !window.electronAPI.submitErrorReport) return;
+
+    // Abrir / cerrar el modal
+    function openModal()  { modal.classList.remove("hidden"); msgEl.focus(); }
+    function closeModal() { modal.classList.add("hidden"); }
+
+    if (fab)      fab.addEventListener("click", openModal);
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    if (modal)    modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal && !modal.classList.contains("hidden")) closeModal();
+    });
 
     btn.addEventListener("click", async () => {
         const message = msgEl.value.trim();

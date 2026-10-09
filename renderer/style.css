@@ -734,8 +734,8 @@ body .bg-shape3 {
    ======================== */
   .update-toast {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 84px;
+    right: 24px;
     display: flex;
     align-items: center;
     gap: 14px;
@@ -815,4 +815,103 @@ body .bg-shape3 {
     color: #1a6fa8;
     min-height: 20px;
     margin-top: 4px;
+  }
+
+/* ========================
+   Botón flotante de reporte de errores
+   ======================== */
+  .error-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 900;
+    background: linear-gradient(135deg, #0d2a47, #2980b9);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 11px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(13, 42, 71, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  }
+
+  .error-fab::before {
+    content: "⚠ ";
+  }
+
+  .error-fab:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(13, 42, 71, 0.45);
+  }
+
+/* ========================
+   Modal de reporte de errores
+   ======================== */
+  .error-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13, 42, 71, 0.45);
+    backdrop-filter: blur(2px);
+    padding: 20px;
+    animation: errorModalFade 0.15s ease;
+  }
+
+  @keyframes errorModalFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .error-modal.hidden {
+    display: none;
+  }
+
+  .error-modal-box {
+    position: relative;
+    background: #f7f9fc;
+    border-radius: 12px;
+    padding: 28px 28px 22px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(13, 42, 71, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .error-modal-box h2 {
+    margin: 0;
+    color: #0d2a47;
+    font-size: 20px;
+  }
+
+  .error-modal-box p {
+    margin: 0;
+  }
+
+  .error-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    line-height: 1;
+    color: #6b7f94;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .error-modal-close:hover {
+    background: #e3edf7;
+    color: #0d2a47;
   }

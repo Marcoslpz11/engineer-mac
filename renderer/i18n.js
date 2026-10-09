@@ -25,6 +25,7 @@ const translations = {
         "error.folderExists": "The folder \"{name}\" already exists in the destination.",
 
         "tab.error":                "Submit an error",
+        "error.fabBtn":             "Report an error",
         "error.title":              "Submit an error",
         "error.desc":               "Describe the problem you found. Your report is sent to the developer so it can be fixed.",
         "error.reporterLabel":      "Your name (optional)",
@@ -179,6 +180,7 @@ const translations = {
         "error.folderExists": "フォルダ「{name}」は保存先に既に存在します。",
 
         "tab.error":                "エラー報告",
+        "error.fabBtn":             "エラー報告",
         "error.title":              "エラー報告",
         "error.desc":               "発見した不具合を記入してください。開発者に送信され、修正に役立てられます。",
         "error.reporterLabel":      "お名前（任意）",

@@ -35,7 +35,6 @@
     <button class="tabButton"        data-tab="codeGroupTab" data-i18n="tab.codeGroup">Min / Beautify</button>
     <button class="tabButton"        data-tab="wpGroupTab"   data-i18n="tab.wpGroup">WordPress</button>
     <button class="tabButton"        data-tab="templateTab"  data-i18n="tab.template">Template</button>
-    <button class="tabButton"        data-tab="errorTab"     data-i18n="tab.error">Submit an error</button>
   </div>
 
   <!-- Contenido WebP -->
@@ -232,11 +231,17 @@
     </div>
   </div>
 
-  <!-- Reporte de errores -->
-  <div class="tabContent" id="errorTab">
-    <h1 data-i18n="error.title">Submit an error</h1>
-    <p data-i18n="error.desc">Describe the problem you found. Your report is sent to the developer.</p>
-    <div class="template-form">
+  </div> <!-- /tabs-wrapper -->
+
+  <!-- Botón flotante de reporte de errores -->
+  <button id="errorFab" class="error-fab" data-i18n="error.fabBtn">エラー報告</button>
+
+  <!-- Modal de reporte de errores -->
+  <div id="errorModal" class="error-modal hidden">
+    <div class="error-modal-box">
+      <button id="errorModalClose" class="error-modal-close" aria-label="close">&times;</button>
+      <h2 data-i18n="error.title">Submit an error</h2>
+      <p data-i18n="error.desc">Describe the problem you found. Your report is sent to the developer.</p>
       <div class="form-group">
         <span class="form-label" data-i18n="error.reporterLabel">Your name (optional)</span>
         <input type="text" id="errorReporter" data-i18n-placeholder="error.reporterPlaceholder" placeholder="e.g. Marcos">
@@ -252,8 +257,6 @@
       <p id="errorStatus"></p>
     </div>
   </div>
-
-  </div> <!-- /tabs-wrapper -->
 
   <script src="i18n.js"></script>
   <script src="renderer.js"></script>
