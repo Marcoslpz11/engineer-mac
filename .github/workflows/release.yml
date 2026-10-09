@@ -8,7 +8,9 @@ on:
 
 jobs:
   release-mac:
-    runs-on: macos-latest
+    # Fijado a macos-15 (Apple Silicon): macos-latest pasó a macOS 26 y
+    # electron-builder 24 falla ahí al firmar (set-key-partition-list).
+    runs-on: macos-15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
