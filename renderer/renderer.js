@@ -778,9 +778,20 @@ downloadMinBtn.addEventListener("click", async () => {
         versionEl.textContent = "v" + v;
     });
 
-    function show(text) {
+    let dismissTimer = null;
+
+    function show(text, autoDismissMs) {
+        clearTimeout(dismissTimer);
         banner.classList.remove("hidden");
         msgEl.textContent = text;
+        if (autoDismissMs) {
+            dismissTimer = setTimeout(hide, autoDismissMs);
+        }
+    }
+    function hide() {
+        clearTimeout(dismissTimer);
+        banner.classList.add("hidden");
+        hideAction();
     }
     function hideAction() {
         actionBtn.classList.add("hidden");
@@ -792,8 +803,8 @@ downloadMinBtn.addEventListener("click", async () => {
         show(t("update.checking"));
         hideAction();
         const r = await window.electronAPI.updater.check();
-        if (r && r.dev)        show(t("update.devMode"));
-        else if (r && r.error) show(t("update.error") + r.error);
+        if (r && r.dev)        show(t("update.devMode"), 5000);
+        else if (r && r.error) show(t("update.error") + r.error, 7000);
     });
 
     // Eventos del proceso principal
@@ -805,7 +816,7 @@ downloadMinBtn.addEventListener("click", async () => {
                 break;
 
             case "not-available":
-                show(t("update.upToDate"));
+                show(t("update.upToDate"), 5000);
                 hideAction();
                 break;
 
@@ -834,7 +845,7 @@ downloadMinBtn.addEventListener("click", async () => {
                 break;
 
             case "error":
-                show(t("update.error") + (data.message || ""));
+                show(t("update.error") + (data.message || ""), 7000);
                 hideAction();
                 break;
         }

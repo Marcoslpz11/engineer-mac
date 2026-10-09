@@ -9,20 +9,22 @@
 
   <img src="../images/logo.svg" class="app-logo" alt="Platin logo">
 
-  <!-- Selector de idioma -->
-  <div class="lang-switcher">
-    <button class="langBtn" data-lang="en">EN</button>
-    <button class="langBtn active" data-lang="jp">JP</button>
+  <!-- Barra superior: actualizaciones + idioma -->
+  <div class="topbar">
+    <div class="update-area">
+      <span id="appVersion" class="app-version"></span>
+      <button id="checkUpdateBtn" class="update-check-btn" data-i18n="update.check">Buscar actualizaciones</button>
+    </div>
+    <div class="lang-switcher">
+      <button class="langBtn" data-lang="en">EN</button>
+      <button class="langBtn active" data-lang="jp">JP</button>
+    </div>
   </div>
 
-  <!-- Actualizaciones -->
-  <div class="update-area">
-    <span id="appVersion" class="app-version"></span>
-    <button id="checkUpdateBtn" class="update-check-btn" data-i18n="update.check">Buscar actualizaciones</button>
-    <div id="updateBanner" class="update-banner hidden">
-      <span id="updateMsg"></span>
-      <button id="updateActionBtn" class="update-action-btn hidden"></button>
-    </div>
+  <!-- Aviso de actualización (toast flotante) -->
+  <div id="updateBanner" class="update-toast hidden">
+    <span id="updateMsg"></span>
+    <button id="updateActionBtn" class="update-action-btn hidden"></button>
   </div>
 
   <!-- Tabs + contenido -->
