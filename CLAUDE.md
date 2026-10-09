@@ -54,3 +54,24 @@ Cuando se trabaje desde ese PC:
    (electron-updater sirve `latest-mac.yml` y `latest.yml` desde una sola release).
 Pregunta a resolver entonces: ¿los archivos de Windows son este mismo proyecto (solo
 compilado allí) o tienen cambios propios? Eso determina cuánto hay que portar.
+
+## Convertidor Form → CF7 (hecho)
+Pestaña "Form → CF7" (`renderer/cf7converter.js`): convierte los forms estáticos de la
+empresa (estructura `.p-form__item` > `.p-form__title` + `.p-form__content`) a Contact
+Form 7. Soporta **Multi-Step Forms** (form principal + confirm + estilos de botones) y
+**Confirm Plus** (un solo form + clases `title-contactform7 for-{nombre}` en cada `<dt>` +
+estilos `#wpcf7cpcnf`). Tipos: text/email/tel/textarea/radio/checkbox/select/address
+(YubinBango: `p-postal-code`/`p-region`/… + span `p-country-name`)/file. DTX (post title o
+taxonomy+slug). Privacy (`.p-form__privacy`) se deja intacta; `c-fontB` solo si ya estaba.
+
+## PENDIENTE: Parte 2 — plugin de WordPress
+Objetivo: la app Engineer exporta un **JSON** con los datos de los forms del convertidor, y
+un **plugin de WordPress** lo importa y: (1) crea los forms de Contact Form 7 (CPT
+`wpcf7_contact_form` + meta `_form`, `_mail`, `_mail_2`, `_messages`,
+`_additional_settings`), (2) deja Flamingo listo (captura automática al estar instalado),
+(3) escribe las plantillas de correo (`_mail`/`_mail_2`: destinatario, asunto, cuerpo con
+`[campos]`). Es viable.
+Decisiones a tomar al empezar: ¿el JSON lleva el markup CF7 ya generado (plugin solo lo
+guarda) o datos estructurados (plugin construye el markup)? · cómo llega el JSON al plugin
+(subirlo en una página de admin del plugin es lo más fácil) · hay que añadir **export a
+JSON** en el convertidor de la Parte 1.
