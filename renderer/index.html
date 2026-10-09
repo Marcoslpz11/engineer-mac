@@ -31,7 +31,7 @@
   <div class="tabs-wrapper">
   <div class="tabs">
     <button class="tabButton active" data-tab="webpTab"     data-i18n="tab.webp">WebP</button>
-    <button class="tabButton"        data-tab="svgGroupTab"  data-i18n="tab.svgGroup">SVG</button>
+    <button class="tabButton"        data-tab="cf7Tab"       data-i18n="tab.cf7">Form → CF7</button>
     <button class="tabButton"        data-tab="codeGroupTab" data-i18n="tab.codeGroup">Min / Beautify</button>
     <button class="tabButton"        data-tab="wpGroupTab"   data-i18n="tab.wpGroup">WordPress</button>
     <button class="tabButton"        data-tab="templateTab"  data-i18n="tab.template">Template</button>
@@ -58,51 +58,6 @@
     <p id="selectedInfo"></p>
     <p id="status"></p>
     <div id="previewContainer"></div>
-  </div>
-
-  <!-- Grupo SVG -->
-  <div class="tabContent" id="svgGroupTab">
-    <div class="subTabs">
-      <button class="subTabButton active" data-subtab="svgTab"     data-i18n="tab.svg">Optimizar SVG</button>
-      <button class="subTabButton"        data-subtab="svgFillTab" data-i18n="tab.svgFill">Colores SVG</button>
-    </div>
-
-    <div class="subTabContent active" id="svgTab">
-      <h1 data-i18n="svg.title">Optimizar SVG</h1>
-      <p data-i18n="svg.desc">Selecciona archivos <code>.svg</code> para reducir su peso. Los archivos se reemplazan en el sitio original.</p>
-      <button id="selectSvgFiles" data-i18n="common.selectFiles">Seleccionar archivos</button>
-      <button id="svgOptimizeBtn" disabled data-i18n="svg.optimizeBtn">Optimizar</button>
-      <p id="svgStatus"></p>
-      <ul id="svgFileList"></ul>
-    </div>
-
-    <div class="subTabContent" id="svgFillTab">
-      <h1 data-i18n="svgFill.title">Cambiar colores SVG</h1>
-      <p data-i18n="svgFill.desc">Deja un campo vacío para mantener el valor original.</p>
-      <label class="color-picker-label">
-        <span data-i18n="svgFill.fill">Fill</span>:
-        <input type="color" id="svgFillColor" value="#000000">
-        <input type="text" id="svgFillHex" data-i18n-placeholder="svgFill.emptyHint" placeholder="vacío = sin cambios" maxlength="7">
-        <button id="svgFillClear" type="button">✕</button>
-      </label>
-      <br>
-      <label class="color-picker-label">
-        <span data-i18n="svgFill.stroke">Stroke</span>:
-        <input type="color" id="svgStrokeColor" value="#000000">
-        <input type="text" id="svgStrokeHex" data-i18n-placeholder="svgFill.emptyHint" placeholder="vacío = sin cambios" maxlength="7">
-        <button id="svgStrokeClear" type="button">✕</button>
-      </label>
-      <br><br>
-      <label class="color-picker-label">
-        <span data-i18n="svgFill.rename">Nombre</span>: <input type="text" id="svgRenameName" data-i18n-placeholder="svgFill.renamePlaceholder" placeholder="vacío = nombre original">
-      </label>
-      <br>
-      <button id="selectSvgFillFiles" data-i18n="common.selectFiles">Seleccionar archivos</button>
-      <button id="svgFillBtn" disabled data-i18n="svgFill.applyBtn">Cambiar color</button>
-      <button id="downloadSvgFillBtn" disabled data-i18n="common.downloadBtn">Descargar archivos</button>
-      <p id="svgFillStatus"></p>
-      <ul id="svgFillFileList"></ul>
-    </div>
   </div>
 
   <!-- Grupo Min / Beautify -->
@@ -231,6 +186,98 @@
     </div>
   </div>
 
+  <!-- Static form → Contact Form 7 -->
+  <div class="tabContent" id="cf7Tab">
+    <h1 data-i18n="cf7.title">Static form → Contact Form 7</h1>
+
+    <!-- Paso 1: plugin + nombres + HTML -->
+    <div class="cf7-step" id="cf7Step1">
+      <h2 class="cf7-step-title"><span class="cf7-step-num">1</span> <span data-i18n="cf7.step1">Paste the form</span></h2>
+      <div class="form-group">
+        <span class="form-label" data-i18n="cf7.plugin">Plugin</span>
+        <div class="cf7-plugin-row">
+          <label><input type="radio" name="cf7Plugin" value="multistep" checked> Multi-Step Forms</label>
+          <label><input type="radio" name="cf7Plugin" value="confirmplus"> Confirm Plus</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="form-label" data-i18n="cf7.formName">Form name</span>
+        <input type="text" id="cf7FormName" placeholder="お問い合わせ">
+      </div>
+      <div id="cf7MultistepOpts">
+        <div class="form-group">
+          <span class="form-label" data-i18n="cf7.confirmName">Confirm form name</span>
+          <input type="text" id="cf7ConfirmName" placeholder="お問い合わせ（確認）">
+        </div>
+        <div class="form-group">
+          <span class="form-label" data-i18n="cf7.confirmUrl">Confirm page URL</span>
+          <input type="text" id="cf7ConfirmUrl" placeholder="/contact/confirm/">
+        </div>
+        <div class="form-group">
+          <span class="form-label" data-i18n="cf7.completeUrl">Complete page URL</span>
+          <input type="text" id="cf7CompleteUrl" placeholder="/contact/complete/">
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="form-label" data-i18n="cf7.pasteHtml">Static form HTML</span>
+        <textarea id="cf7Html" rows="10" placeholder="&lt;div class=&quot;p-main__form&quot;&gt; ..."></textarea>
+      </div>
+      <button id="cf7AnalyzeBtn" data-i18n="cf7.analyze">Analyze</button>
+      <p id="cf7Step1Status" class="cf7-status"></p>
+    </div>
+
+    <!-- Paso 2: confirmar campos -->
+    <div class="cf7-step hidden" id="cf7Step2">
+      <h2 class="cf7-step-title"><span class="cf7-step-num">2</span> <span data-i18n="cf7.step2">Confirm fields</span></h2>
+      <p class="form-hint" data-i18n="cf7.step2Hint">Review and adjust the detected fields (type, required, name).</p>
+      <div id="cf7FieldsList" class="cf7-fields"></div>
+      <div class="cf7-nav">
+        <button id="cf7Back2" class="btn-secondary" data-i18n="cf7.back">Back</button>
+        <button id="cf7ToStep3" data-i18n="cf7.next">Next</button>
+      </div>
+    </div>
+
+    <!-- Paso 3: DTX -->
+    <div class="cf7-step hidden" id="cf7Step3">
+      <h2 class="cf7-step-title"><span class="cf7-step-num">3</span> <span data-i18n="cf7.step3">Dynamic fields (DTX)</span></h2>
+      <label class="cf7-dtx-toggle"><input type="checkbox" id="cf7UseDtx"> <span data-i18n="cf7.useDtx">Use DTX (Dynamic Text Extension)</span></label>
+      <div id="cf7DtxList" class="cf7-fields hidden"></div>
+      <div class="cf7-nav">
+        <button id="cf7Back3" class="btn-secondary" data-i18n="cf7.back">Back</button>
+        <button id="cf7GenerateBtn" data-i18n="cf7.generate">Generate CF7</button>
+      </div>
+    </div>
+
+    <!-- Resultado -->
+    <div class="cf7-step hidden" id="cf7Result">
+      <h2 class="cf7-step-title" data-i18n="cf7.result">Result</h2>
+      <div class="cf7-output-block">
+        <div class="cf7-output-head">
+          <span data-i18n="cf7.mainForm">Main form</span>
+          <button class="cf7-copy-btn" data-target="cf7OutMain" data-i18n="cf7.copy">Copy</button>
+        </div>
+        <textarea id="cf7OutMain" class="cf7-output" rows="12" readonly></textarea>
+      </div>
+      <div class="cf7-output-block" id="cf7ConfirmBlock">
+        <div class="cf7-output-head">
+          <span data-i18n="cf7.confirmForm">Confirm form</span>
+          <button class="cf7-copy-btn" data-target="cf7OutConfirm" data-i18n="cf7.copy">Copy</button>
+        </div>
+        <textarea id="cf7OutConfirm" class="cf7-output" rows="12" readonly></textarea>
+      </div>
+      <div class="cf7-output-block" id="cf7StylesBlock">
+        <div class="cf7-output-head">
+          <span data-i18n="cf7.styles">Styles (confirmation page)</span>
+          <button class="cf7-copy-btn" data-target="cf7OutStyles" data-i18n="cf7.copy">Copy</button>
+        </div>
+        <textarea id="cf7OutStyles" class="cf7-output" rows="14" readonly></textarea>
+      </div>
+      <div class="cf7-nav">
+        <button id="cf7Restart" class="btn-secondary" data-i18n="cf7.restart">Start over</button>
+      </div>
+    </div>
+  </div>
+
   </div> <!-- /tabs-wrapper -->
 
   <!-- Botón flotante de reporte de errores -->
@@ -260,5 +307,6 @@
 
   <script src="i18n.js"></script>
   <script src="renderer.js"></script>
+  <script src="cf7converter.js"></script>
 </body>
 </html>
