@@ -159,7 +159,7 @@ async function generateHeaderLinks(srcDir, scan) {
 }
 
 // Genera functions.php a partir del template base
-function generateFunctions(archiveTypes, postalPages) {
+function generateFunctions(archiveTypes, postalPages, phpFiles = []) {
     // Bloque posts_order dinámico
     const postTypeBlocks = archiveTypes.map(({ type, count }) =>
         `if ( $query->is_post_type_archive('${type}')) {\n        $query->set('posts_per_page', '${count}');\n    return;\n    }`
@@ -169,13 +169,21 @@ function generateFunctions(archiveTypes, postalPages) {
         ? `/* 投稿の表示件数・表示順等 */\nfunction posts_order($query) {\nif ( is_admin() || ! $query->is_main_query() ){\n    return;\n}\n    ${postTypeBlocks}\n}\nadd_action( 'pre_get_posts', 'posts_order' );`
         : '';
 
-    // Bloque postal code CF7
+    // Bloque postal code (YubinBango)
     const postalSlugs = postalPages
         .map(s => s.trim())
         .filter(Boolean);
 
+    // Para cada slug: si existe single-{slug}.php en el origen -> is_singular,
+    // si no (page-{slug}.php o index.php) -> is_page.
+    const postalConditions = postalSlugs
+        .map(slug => phpFiles.includes(`single-${slug}.php`)
+            ? `is_singular('${slug}')`
+            : `is_page('${slug}')`)
+        .join(' || ');
+
     const postalBlock = postalSlugs.length > 0
-        ? `\n// 郵便番号検索スクリプト\nfunction enqueue_postal_code_script() {\n    if ( is_singular() && in_array( get_post_field('post_name'), array( ${postalSlugs.map(s => `'${s}'`).join(', ')} ) ) ) {\n        wp_enqueue_script( 'ajaxzip3', 'https://ajaxzip3.github.io/ajaxzip3.js', array('jquery'), null, true );\n    }\n}\nadd_action( 'wp_enqueue_scripts', 'enqueue_postal_code_script' );`
+        ? `\n// 郵便番号検索スクリプト\nfunction zip_library() {\n    if ( ${postalConditions} ) {\n        wp_enqueue_script( 'youbinbango-js', 'https://yubinbango.github.io/yubinbango/yubinbango.js', array(), 'null', true );\n    }\n}\nadd_action( 'wp_enqueue_scripts', 'zip_library' );`
         : '';
 
     return `<?php
@@ -348,24 +356,168 @@ function fix_svg_thumb_display() {
 }
 add_action('admin_head', 'fix_svg_thumb_display');
 
-/* REST API ユーザー情報をブロック */
-function my_filter_rest_endpoints( $endpoints ) {
-    if ( isset( $endpoints['/wp/v2/users'] ) ) {
-        unset( $endpoints['/wp/v2/users'] );
-    }
-    if ( isset( $endpoints['/wp/v2/users/(?P[\\d]+)'] ) ) {
-        unset( $endpoints['/wp/v2/users/(?P[\\d]+)'] );
-    }
-    return $endpoints;
-}
-add_filter( 'rest_endpoints', 'my_filter_rest_endpoints', 10, 1 );
-
 // Contact Form 7の自動pタグ無効
 add_filter('wpcf7_autop_or_not', 'wpcf7_autop_return_false');
 function wpcf7_autop_return_false() {
   return false;
 }
 ${postalBlock}
+
+// フォーム遷移ガード（直前ステップからのみ遷移を許可）
+add_action('template_redirect', function () {
+  // ここをあなたのフローに合わせて並べ替え／追加してください
+  $flow = ['contact', 'confirm', 'complete']; // /contact → /confirm → /complete
+
+  // 対象ページかどうか
+  if ( ! is_page($flow) ) return;
+
+  // 今いるステップを特定
+  $current = null;
+  foreach ($flow as $slug) {
+    if (is_page($slug)) { $current = $slug; break; }
+  }
+  if ($current === null) return;
+
+  $idx = array_search($current, $flow, true);
+  if ($idx === 0) return; // 最初のステップは常にOK（直アクセス許可）
+
+  // 直前ステップからの遷移かどうかをリファラで判定
+  $ref = wp_get_referer();
+  if (!$ref) {
+    wp_safe_redirect(home_url('/'));
+    exit;
+  }
+
+  $prev_url  = home_url( '/' . $flow[$idx - 1] . '/' );
+  $ref_path  = trailingslashit( parse_url($ref, PHP_URL_PATH) ?: '' );
+  $prev_path = trailingslashit( parse_url($prev_url, PHP_URL_PATH) ?: '' );
+
+  if ($ref_path !== $prev_path) {
+    wp_safe_redirect(home_url('/'));
+    exit;
+  }
+});
+
+// WebP アップロード許可（メディアライブラリで .webp を使用可能にする）
+function custom_mime_types( $mimes ) {
+  $mimes['webp'] = 'image/webp';
+  return $mimes;
+}
+add_filter( 'upload_mimes', 'custom_mime_types' );
+
+/*
+// 以下は .htaccess 用の WebP 配信設定です（PHPではないのでコメント化しています）。
+// 実際には functions.php ではなく .htaccess に、コメントを外して貼り付けてください。
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1. ブラウザが WebP に対応しているか確認
+  RewriteCond %{HTTP_ACCEPT} image/webp
+
+  # 2. リクエストされた画像の拡張子を .webp に差し替えたファイルが存在するか確認
+  # 例: /images/test.jpg -> /images/test.webp
+  RewriteCond %{REQUEST_FILENAME} \\.(jpe?g|png)$ [NC]
+  RewriteCond %{REQUEST_FILENAME} ^(.*)\\.(jpe?g|png)$ [NC]
+  RewriteCond %1.webp -f
+
+  # 3. .webp ファイルへ内部リダイレクト
+  RewriteRule \\.(jpe?g|png)$ %1.webp [T=image/webp,E=accept:1,L]
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+</IfModule>
+*/
+
+//----------セキュリティ関連の記述----------//
+/**
+ * REST APIのユーザーエンドポイントを非ログインユーザーから隠す
+ */
+function restrict_rest_api_user_endpoint( $response, $handler, $request ) {
+    // リクエストがユーザーエンドポイントで、かつGETメソッドの場合
+    if ( strpos( $request->get_route(), '/wp/v2/users' ) !== false ) {
+        // ログインしていないユーザーの場合
+        if ( ! is_user_logged_in() ) {
+            // 権限がないというエラーを返す
+            return new WP_Error(
+                'rest_cannot_view_users',
+                __( 'ユーザー情報を表示する権限がありません。', 'your-textdomain' ),
+                array( 'status' => rest_authorization_required_code() )
+            );
+        }
+    }
+    return $response;
+}
+add_filter( 'rest_pre_dispatch', 'restrict_rest_api_user_endpoint', 10, 3 );
+
+/**
+ * author=N のリクエストがあった場合に404ページを返す
+ */
+if (!is_admin()) {
+    if (isset($_REQUEST['author']) || is_author()) {
+        wp_die(
+            'アクセス権限がありません。',
+            'エラー',
+            array('response' => 404)
+        );
+        exit;
+    }
+}
+
+/**
+ * すべてのWordPressフィードを無効化し、404ページへリダイレクトする
+ */
+function disable_all_feeds() {
+    // フィードリクエストの場合
+    if ( is_feed() ) {
+        // 404エラーとして処理し、リダイレクトする
+        wp_die( __('フィードは現在無効化されています。', 'text-domain'), __('フィード無効化', 'text-domain'), array( 'response' => 404 ) );
+    }
+    // フィードリンクを削除する
+    remove_action( 'wp_head', 'feed_links', 2 );
+    remove_action( 'wp_head', 'feed_links_extra', 3 );
+}
+add_action( 'template_redirect', 'disable_all_feeds', 1 );
+
+function custom_cf7_strip_html( $posted_data ) {
+    // 投稿された各フォームフィールドのデータをチェック
+    foreach ( $posted_data as $key => $value ) {
+        // データが配列の場合 (例: チェックボックス)
+        if ( is_array( $value ) ) {
+            $sanitized_array = array();
+            foreach ( $value as $item ) {
+                // 配列内の各要素からHTMLタグを全て除去
+                $sanitized_array[] = wp_strip_all_tags( $item );
+            }
+            $posted_data[ $key ] = $sanitized_array;
+        } else {
+            // 文字列の場合、HTMLタグを全て除去
+            // これにより、<script> や <a> などのタグはすべて取り除かれ、テキストのみになる
+            $posted_data[ $key ] = wp_strip_all_tags( $value );
+        }
+    }
+
+    // 処理されたデータをContact Form 7に戻す
+    return $posted_data;
+}
+// 'wpcf7_posted_data' フィルターフックに関数を適用
+add_filter( 'wpcf7_posted_data', 'custom_cf7_strip_html' );
+
+//----------セキュリティ関連の記述----------//
+
+// スラッグにcompleteまたはconfirmが含まれるページをnoindexにする
+function add_noindex_to_complete_confirm_pages() {
+  if (is_page()) {
+    global $post;
+    $slug = $post->post_name;
+
+    // スラッグにcompleteまたはconfirmが含まれている場合
+    if (strpos($slug, 'complete') !== false || strpos($slug, 'confirm') !== false) {
+        echo '<meta name="robots" content="noindex, nofollow">' . "\\n";
+    }
+  }
+}
+add_action('wp_head', 'add_noindex_to_complete_confirm_pages', 1);
 
 //erase margin-top when logged in
 add_action('get_header', function() {
@@ -485,7 +637,7 @@ async function createWpTheme({ srcDir, destDir, themeName, archiveTypes, postalP
     // Generar functions.php
     await fs.promises.writeFile(
         path.join(projectPath, 'functions.php'),
-        generateFunctions(archiveTypes, postalPages),
+        generateFunctions(archiveTypes, postalPages, phpFiles),
         'utf-8'
     );
     results.push('functions.php');
