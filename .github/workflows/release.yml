@@ -41,18 +41,26 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
   # ------------------------------------------------------------------
-  # Windows: se activará desde el otro ordenador (donde están los
-  # archivos de la versión Windows). Descomenta este job cuando el
-  # código de Windows esté en el repositorio.
+  # Windows: instalador NSIS x64 (sin firma de código → SmartScreen
+  # avisa en el primer install). Corre después de Mac para que ambos
+  # suban a la MISMA release borrador y no se creen dos.
   # ------------------------------------------------------------------
-  # release-win:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #     - run: npm ci
-  #     - run: npm run release
-  #       env:
-  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release-win:
+    needs: release-mac
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build & publish (Windows)
+        run: npm run release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

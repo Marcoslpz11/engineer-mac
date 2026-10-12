@@ -93,6 +93,14 @@ function sendUpdateStatus(data) {
 	}
 }
 
+// Mensaje corto para el usuario, o null si no es un error real: la release aún no tiene
+// los archivos de esta plataforma (p.ej. latest.yml de Windows) → simplemente no hay update.
+function updaterErrorMessage(err) {
+	const msg = err == null ? "unknown" : (err.message || String(err));
+	if (/Cannot find latest.*\.yml|HttpError: 404/.test(msg)) return null;
+	return msg.split("\n")[0].slice(0, 200); // sin cabeceras HTTP ni stack
+}
+
 function initAutoUpdater() {
 	autoUpdater = require("electron-updater").autoUpdater;
 	autoUpdater.autoDownload = false;           // No descargar hasta que el usuario pulse el botón
@@ -103,7 +111,10 @@ function initAutoUpdater() {
 	autoUpdater.on("update-not-available", () => sendUpdateStatus({ state: "not-available" }));
 	autoUpdater.on("download-progress", (p) => sendUpdateStatus({ state: "progress", percent: Math.round(p.percent) }));
 	autoUpdater.on("update-downloaded", (info) => sendUpdateStatus({ state: "downloaded", version: info.version }));
-	autoUpdater.on("error", (err) => sendUpdateStatus({ state: "error", message: err == null ? "unknown" : (err.message || String(err)) }));
+	autoUpdater.on("error", (err) => {
+		const msg = updaterErrorMessage(err);
+		sendUpdateStatus(msg ? { state: "error", message: msg } : { state: "not-available" });
+	});
 }
 
 ipcMain.handle("updater:get-version", () => app.getVersion());
@@ -114,7 +125,8 @@ ipcMain.handle("updater:check", async () => {
 		await autoUpdater.checkForUpdates();
 		return { ok: true };
 	} catch (err) {
-		return { error: err.message };
+		const msg = updaterErrorMessage(err);
+		return msg ? { error: msg } : { ok: true };
 	}
 });
 

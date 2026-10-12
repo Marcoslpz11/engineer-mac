@@ -27,7 +27,7 @@ de una versión a la siguiente; el primer install de una build se hace a mano.
 
 ### Gotchas del CI (no re-romper)
 - Runner fijado a `macos-15` (NO `macos-latest`: macOS 26 rompe electron-builder 24 al firmar).
-- Build **solo arm64** (Apple Silicon). Para añadir x64/Windows hace falta runner propio.
+- Build Mac **solo arm64** (Apple Silicon). Para x64 Mac hace falta runner propio.
 - El `.p12` de firma debe generarse con `openssl ... -legacy` (OpenSSL 3 lo rechaza si no).
 - `notarize.teamId` va **hardcodeado** en `package.json` (electron-builder 24 no expande el
   macro de env ni lo lee de env).
@@ -42,18 +42,16 @@ app. Endpoint y clave en `main.js` (`ERROR_REPORT_ENDPOINT`, `ERROR_REPORT_KEY`)
 Para redeploy del Worker: `cd error-report-worker && npx wrangler@3 deploy`
 (usar **wrangler@3**: wrangler 4 requiere Node 22 y aquí hay Node 20).
 
-## PENDIENTE: unificar la versión de Windows
-La versión de Windows existe **solo en el PC de Windows del usuario** (sin repo ni backup).
-Cuando se trabaje desde ese PC:
-1. **Backup** primero de los archivos actuales de Windows (zip).
-2. `git clone` de este repo en una carpeta nueva.
-3. Comparar los archivos de Windows con este codebase y **portar** las diferencias
-   (detrás de `if (process.platform === "win32")` donde haga falta).
-4. Activar el job `release-win` (está preparado y comentado en el workflow).
-5. Tag de release → CI construye y publica Mac + Windows en la misma Release
-   (electron-updater sirve `latest-mac.yml` y `latest.yml` desde una sola release).
-Pregunta a resolver entonces: ¿los archivos de Windows son este mismo proyecto (solo
-compilado allí) o tienen cambios propios? Eso determina cuánto hay que portar.
+## Windows (unificado)
+La antigua copia de Windows (`engineer-app0604`, backup zip en `案件/`) era el **Initial
+commit** + cambios de empaquetado; no tenía código propio. Portado: `images/logo.ico`,
+`win.icon`, accesos directos NSIS. El job `release-win` (windows-latest, `needs: release-mac`
+para que ambos suban a la misma release borrador) publica `Engineer Setup X.Y.Z.exe` +
+`latest.yml`. Sin firma de código en Windows → SmartScreen avisa en el primer install.
+- Build local en Windows: `npx electron-builder --win --publish never`.
+- Diferencias descartadas a propósito: la copia vieja metía `template/template_code/node_modules`
+  dentro de la app y usaba Electron 32; aquí seguimos con `extraResources` (sin node_modules,
+  el usuario hace `npm install` en el proyecto generado) y Electron 25, igual que en Mac.
 
 ## Convertidor Form → CF7 (hecho)
 Pestaña "Form → CF7" (`renderer/cf7converter.js`): convierte los forms estáticos de la
