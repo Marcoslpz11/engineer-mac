@@ -19,8 +19,6 @@ let autoUpdater = null;
 
 // Pre-load all modules at startup (avoids re-requiring on every IPC call)
 const { convertToWebp } = require(path.join(__dirname, "renderer", "modules", "convertWebp.js"));
-const { changeSvgColors } = require(path.join(__dirname, "renderer", "modules", "svgFill.js"));
-const { optimizeSvgs } = require(path.join(__dirname, "renderer", "modules", "optimizeSvg.js"));
 const { beautifyFiles } = require(path.join(__dirname, "renderer", "modules", "beautifyFiles.js"));
 const { minifyFiles } = require(path.join(__dirname, "renderer", "modules", "minifyFiles.js"));
 const { convertToWp } = require(path.join(__dirname, "renderer", "modules", "wpConvert.js"));
@@ -249,7 +247,6 @@ ipcMain.handle("select-files-or-folder", async (_event, type) => {
 	const fileOnlyTypes = {
 		minify:   { filters: [{ name: "CSS / SCSS / JS", extensions: ["css", "scss", "js"] }] },
 		beautify: { filters: [{ name: "JS / CSS", extensions: ["js", "css"] }] },
-		svg:      { filters: [{ name: "SVG", extensions: ["svg"] }] },
 	};
 
 	const config = fileOnlyTypes[type];
@@ -299,53 +296,6 @@ ipcMain.handle("download-webp", async (_event, convertedFiles) => {
 	} catch (err) {
 		console.error("Error al descargar WebP:", err);
 		return false;
-	}
-});
-
-// ========================
-// SVG Fill
-// ========================
-ipcMain.handle("change-svg-fill", async (_event, filePaths, fillColor, strokeColor) => {
-	try {
-		const result = await changeSvgColors(filePaths, fillColor, strokeColor);
-		if (result.tempDir) tempDirs.add(result.tempDir);
-		return { files: result.files };
-	} catch (err) {
-		console.error("Error changeSvgColors:", err);
-		return { error: err.message };
-	}
-});
-
-ipcMain.handle("download-svg-fill", async (_event, files, newName) => {
-	try {
-		const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
-			title: "Seleccionar carpeta de destino",
-			properties: ["openDirectory"]
-		});
-		if (canceled || !filePaths.length) return null;
-
-		const destDir = filePaths[0];
-		await Promise.all(files.map(file => {
-			const ext = path.extname(file.name);
-			const fileName = newName ? `${newName}${ext}` : file.name;
-			return fs.promises.copyFile(file.out, path.join(destDir, fileName));
-		}));
-		return destDir;
-	} catch (err) {
-		console.error("Error download-svg-fill:", err);
-		return null;
-	}
-});
-
-// ========================
-// SVG Optimizer
-// ========================
-ipcMain.handle("optimize-svgs", async (_event, filePaths) => {
-	try {
-		return { files: await optimizeSvgs(filePaths) };
-	} catch (err) {
-		console.error("Error optimizeSvgs:", err);
-		return { error: err.message };
 	}
 });
 

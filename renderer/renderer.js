@@ -61,6 +61,14 @@ qualitySlider.addEventListener("input", () => {
     qualityValue.textContent = qualitySlider.value;
 });
 
+// El ancho máximo solo se muestra con el cambio de tamaño activado
+const maxWidthRow = document.getElementById("maxWidthRow");
+function syncResizeUi() {
+    maxWidthRow.classList.toggle("hidden", !resizeToggle.checked);
+}
+resizeToggle.addEventListener("change", syncResizeUi);
+syncResizeUi();
+
 // ========================
 // Pestañas
 // ========================

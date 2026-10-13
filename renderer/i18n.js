@@ -4,8 +4,6 @@ const translations = {
         "tab.minify":      "Minify Files",
         "tab.wp":          "Convert to WP",
         "tab.beautify":    "Beautify Files",
-        "tab.svg":         "Optimize SVG",
-        "tab.svgFill":     "SVG Colors",
 
         "common.selectFiles":  "Select files",
         "common.selectFolder": "Select folder",
@@ -101,20 +99,6 @@ const translations = {
         "beautify.desc":        "Select minified .js or .css files to format them.",
         "beautify.beautifyBtn": "Beautify",
 
-        "svg.title":       "Optimize SVG",
-        "svg.desc":        "Select .svg files to reduce their size. Files are replaced in place.",
-        "svg.optimizeBtn": "Optimize",
-
-        "svgFill.title":            "Change SVG colors",
-        "svgFill.desc":             "Leave a field empty to keep the original value.",
-        "svgFill.fill":             "Fill",
-        "svgFill.stroke":           "Stroke",
-        "svgFill.emptyHint":        "empty = no change",
-        "svgFill.rename":           "Name",
-        "svgFill.renamePlaceholder":"empty = original name",
-        "svgFill.applyBtn":         "Apply color",
-
-        "tab.svgGroup":                    "SVG",
         "tab.codeGroup":                   "Min / Beautify",
         "tab.wpGroup":                     "WordPress",
         "tab.template":                    "Create Template",
@@ -164,7 +148,6 @@ const translations = {
         "common.folderSelected":     "Folder: ",
         "common.fileSelected":       "File: ",
         "common.filesSelected":      " files selected.",
-        "common.noSvgFiles":         "No .svg files found.",
         "common.noPhpFiles":         "No .php files found.",
 
         "webp.noImages":             "No images (.jpg, .jpeg, .png) found in selection.",
@@ -176,13 +159,6 @@ const translations = {
         "minify.done":               " files minified!",
         "minify.filesSelected":      " files selected.",
         "minify.savedTo":            "Files downloaded to: ",
-
-        "svgFill.colorRequired":     "Enter at least one color (fill or stroke).",
-        "svgFill.applying":          "Applying ",
-        "svgFill.done":              " files processed!",
-
-        "svg.optimizing":            "Optimizing SVGs...",
-        "svg.done":                  " SVGs optimized! ",
 
         "beautify.noFiles":          "No .js or .css files found.",
         "beautify.beautifying":      "Formatting files...",
@@ -199,8 +175,6 @@ const translations = {
         "tab.minify":      "ファイル圧縮",
         "tab.wp":          "WPに変換",
         "tab.beautify":    "ファイル整形",
-        "tab.svg":         "SVG最適化",
-        "tab.svgFill":     "SVGカラー",
 
         "common.selectFiles":  "ファイルを選択",
         "common.selectFolder": "フォルダを選択",
@@ -296,20 +270,6 @@ const translations = {
         "beautify.desc":        "圧縮済みの.jsまたは.cssファイルを選択して整形します。",
         "beautify.beautifyBtn": "整形する",
 
-        "svg.title":       "SVG最適化",
-        "svg.desc":        ".svgファイルを選択してサイズを削減します。ファイルは元の場所に上書きされます。",
-        "svg.optimizeBtn": "最適化",
-
-        "svgFill.title":            "SVGカラー変更",
-        "svgFill.desc":             "空欄のままにすると元の値が保持されます。",
-        "svgFill.fill":             "塗り",
-        "svgFill.stroke":           "線",
-        "svgFill.emptyHint":        "空欄 = 変更なし",
-        "svgFill.rename":           "ファイル名",
-        "svgFill.renamePlaceholder":"空欄 = 元のファイル名",
-        "svgFill.applyBtn":         "色を適用",
-
-        "tab.svgGroup":                    "SVG",
         "tab.codeGroup":                   "圧縮 / 整形",
         "tab.wpGroup":                     "WordPress",
         "tab.template":                    "テンプレート作成",
@@ -359,7 +319,6 @@ const translations = {
         "common.folderSelected":     "フォルダ: ",
         "common.fileSelected":       "ファイル: ",
         "common.filesSelected":      " 個のファイルが選択されました。",
-        "common.noSvgFiles":         ".svgファイルが見つかりません。",
         "common.noPhpFiles":         ".phpファイルが見つかりません。",
 
         "webp.noImages":             "画像が見つかりません（.jpg, .jpeg, .png）。",
@@ -371,13 +330,6 @@ const translations = {
         "minify.done":               " 個のファイルを圧縮しました！",
         "minify.filesSelected":      " 個のファイルが選択されました。",
         "minify.savedTo":            "ダウンロード先: ",
-
-        "svgFill.colorRequired":     "塗り（fill）または線（stroke）を入力してください。",
-        "svgFill.applying":          "適用中: ",
-        "svgFill.done":              " 個のファイルを処理しました！",
-
-        "svg.optimizing":            "SVGを最適化中...",
-        "svg.done":                  " 個のSVGを最適化しました！ ",
 
         "beautify.noFiles":          ".jsまたは.cssファイルが見つかりません。",
         "beautify.beautifying":      "ファイルを整形中...",

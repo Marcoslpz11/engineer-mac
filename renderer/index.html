@@ -43,6 +43,11 @@
     <label>
       <input type="checkbox" id="resizeToggle" checked> <span data-i18n="webp.resize">Activar cambio de tamaño</span>
     </label>
+    <!-- Solo visible con el cambio de tamaño activado -->
+    <label class="webp-maxwidth" id="maxWidthRow">
+      <span data-i18n="webp.maxWidth">Ancho máximo (px)</span>
+      <input type="number" id="maxWidth" min="1" value="2048">
+    </label>
     <label>
       <input type="checkbox" id="keepNameToggle"> <span data-i18n="webp.keepName">Mantener nombre original (sin extensión .webp)</span>
     </label>
@@ -50,8 +55,7 @@
       <span data-i18n="webp.quality">Calidad WebP</span>: <span id="qualityValue">90</span>%
       <input type="range" id="qualitySlider" min="0" max="100" value="90">
     </label>
-    <input type="number" id="maxWidth" data-i18n-placeholder="webp.maxWidth" placeholder="Ancho máximo (px)" value="2048">
-    <br><br>
+    <br>
     <button id="selectFolder" data-i18n="webp.selectBtn">Seleccionar carpeta</button>
     <button id="convertBtn" disabled data-i18n="webp.convertBtn">Convertir a WebP</button>
     <button id="downloadBtn" disabled data-i18n="webp.downloadBtn">Descargar WebP</button>
