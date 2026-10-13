@@ -20,6 +20,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
     createWpTheme: (options) => ipcRenderer.invoke("create-wp-theme", options),
     createTemplate: (options) => ipcRenderer.invoke("create-template", options),
     submitErrorReport: (data) => ipcRenderer.invoke("submit-error-report", data),
+    saveJsonFile: (defaultName, content) => ipcRenderer.invoke("save-json-file", { defaultName, content }),
+    openPluginDownload: () => ipcRenderer.invoke("open-plugin-download"),
 
     // Actualizaciones
     updater: {

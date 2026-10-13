@@ -1,8 +1,8 @@
 # Engineer — guía del proyecto (para Claude Code)
 
 App de **Electron** ("Engineer", nombre interno `webp-converter`): herramientas de desarrollo
-web (conversión WebP, optimizar/colorear SVG, minificar/formatear JS·CSS, convertir a
-WordPress, crear plantillas, crear temas WP) con interfaz bilingüe **EN/JP**.
+web (conversión WebP, form estático → Contact Form 7, minificar/formatear JS·CSS, convertir
+a WordPress, crear plantillas, crear temas WP) con interfaz bilingüe **EN/JP**.
 
 Repo único: `Marcoslpz11/engineer-mac` (público). **Un solo codebase** sirve para macOS y
 Windows (Electron es multiplataforma); las diferencias van con `process.platform` y en la
@@ -62,14 +62,27 @@ estilos `#wpcf7cpcnf`). Tipos: text/email/tel/textarea/radio/checkbox/select/add
 (YubinBango: `p-postal-code`/`p-region`/… + span `p-country-name`)/file. DTX (post title o
 taxonomy+slug). Privacy (`.p-form__privacy`) se deja intacta; `c-fontB` solo si ya estaba.
 
-## PENDIENTE: Parte 2 — plugin de WordPress
-Objetivo: la app Engineer exporta un **JSON** con los datos de los forms del convertidor, y
-un **plugin de WordPress** lo importa y: (1) crea los forms de Contact Form 7 (CPT
-`wpcf7_contact_form` + meta `_form`, `_mail`, `_mail_2`, `_messages`,
-`_additional_settings`), (2) deja Flamingo listo (captura automática al estar instalado),
-(3) escribe las plantillas de correo (`_mail`/`_mail_2`: destinatario, asunto, cuerpo con
-`[campos]`). Es viable.
-Decisiones a tomar al empezar: ¿el JSON lleva el markup CF7 ya generado (plugin solo lo
-guarda) o datos estructurados (plugin construye el markup)? · cómo llega el JSON al plugin
-(subirlo en una página de admin del plugin es lo más fácil) · hay que añadir **export a
-JSON** en el convertidor de la Parte 1.
+## Parte 2 — export JSON + plugin de WordPress (hecho)
+En el resultado del convertidor: **"JSON を書き出す"** (export) y **"WordPress プラグインを
+ダウンロード"** (abre `…/releases/latest/download/engineer-cf7-importer.zip`).
+Reparto: **la app construye todo** (markup de los forms, mails y その他の設定); el plugin
+(`wp-plugin/engineer-cf7-importer/`, un solo PHP) solo lo aplica. Motivo: el plugin vive en
+cada WordPress y se actualiza a mano; la app se auto-actualiza. Cambiar textos de mails =
+release de la app, no del plugin.
+- JSON: `{format:"engineer-cf7", version:1, plugin, category, forms:[{role, title, form,
+  mail?, mail_2?, additional_settings}]}`. Si cambia el formato, subir `EXPORT_VERSION`
+  (cf7converter.js) y `ENGINEER_CF7_VERSION` (plugin) a la vez.
+- Multi-Step: `main` (`do_not_store: true`, mails por defecto de CF7, no envía) + `confirm`
+  (mails + `flamingo_subject: "{form}から"`). Confirm Plus: un `single` con mails + flamingo.
+- Mails: 送信先/送信元 `info@platin.co.jp`, Reply-To, cuerpo = todos los campos
+  `{label}：[tag]` (address `〒[zip] [addr]`, textarea con el tag en la línea siguiente).
+  ファイル添付 = campo "File attachments" de CF7 con los `[file-NN]`. Textos según tipo
+  お問い合わせ / エントリー (`MAIL_TEXTS` en cf7converter.js).
+- Plugin: página bajo el menú de CF7 → subir JSON → crea forms (si el título ya existe,
+  crea otro y avisa) → muestra un snippet `do_shortcode` por form con `html_class="h-adr"`.
+- CI: el job `release-mac` comprime `wp-plugin/` y lo sube a la release (`gh release upload`).
+- Avisos de CF7 esperables: Multi-Step confirm marca "Invalid mailbox syntax" en
+  `[your-email]` (allí es `[multiform]`); Confirm Plus marca "Unsafe email config" en el
+  mail 2 si la web no tiene reCAPTCHA/Turnstile/Akismet.
+- Probar el plugin sin PHP local: WordPress Playground CLI (`@wp-playground/cli`, necesita
+  Node ≥ 24 → `npx -p node@24 -p @wp-playground/cli …`).

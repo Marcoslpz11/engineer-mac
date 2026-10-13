@@ -38,6 +38,9 @@
     const confirmBlock = document.getElementById("cf7ConfirmBlock");
     const stylesBlock  = document.getElementById("cf7StylesBlock");
     const restartBtn = document.getElementById("cf7Restart");
+    const exportBtn    = document.getElementById("cf7ExportBtn");
+    const pluginBtn    = document.getElementById("cf7PluginBtn");
+    const exportStatus = document.getElementById("cf7ExportStatus");
 
     const FIELD_TYPES = ["text", "email", "tel", "textarea", "radio", "checkbox", "select", "address", "file"];
 
@@ -121,10 +124,33 @@
     const FILE_FILETYPES = "png|jpg|jpeg|pdf|doc|docx|txt";
     const FILE_LIMIT = "4mb";
 
+    // --- Mails (los construye la app; el plugin de WP solo los aplica) ---
+    // Formato del JSON que lee el plugin "Engineer CF7 Importer". Si cambia, subir la versión
+    // aquí y en el plugin a la vez.
+    const EXPORT_FORMAT = "engineer-cf7";
+    const EXPORT_VERSION = 1;
+
+    const MAIL_ADDRESS = "info@platin.co.jp";
+    const MAIL_SENDER = `[_site_title] <${MAIL_ADDRESS}>`;
+    const MAIL_TEXTS = {
+        inquiry: {
+            adminIntro:    (name) => `[_site_title] の"${name}"に以下の内容でお問い合わせがありました。`,
+            replySubject:  "お問い合わせありがとうございます。｜[_site_title]",
+            replyGreeting: "お問い合わせありがとうございます。",
+        },
+        entry: {
+            adminIntro:    (name) => `[_site_title] に${name}からお問い合わせがありました。`,
+            replySubject:  "ご応募いただきありがとうございます。｜[_site_title]",
+            replyGreeting: "[_site_title] へご応募いただきありがとうございます。",
+        },
+    };
+    const MAIL_REPLY_SECOND_LINE = "担当にて確認の上、折り返しご連絡差し上げますので、今しばらくお待ちください。";
+
     // --- Estado ---
     let state = {
         originalHtml: "",
         plugin: "multistep",
+        category: "inquiry",   // "inquiry" (お問い合わせ) | "entry" (エントリー)
         fields: [],
     };
 
@@ -403,6 +429,84 @@
     }
 
     // ----------------------------------------------------------------
+    // Mails y export a JSON (para el plugin "Engineer CF7 Importer")
+    // ----------------------------------------------------------------
+
+    // Una línea "label：[tag]" por campo, en el orden del form.
+    function mailFieldLines() {
+        const lines = [];
+        state.fields.forEach(f => {
+            const label = f.title || finalName(f);
+            if (f.type === "address") {
+                lines.push(`${label}：〒[zip] [addr]`);
+            } else if (f.type === "textarea") {
+                lines.push(`${label}：`, `[${finalName(f)}]`);
+            } else {
+                lines.push(`${label}：[${finalName(f)}]`);
+            }
+        });
+        return lines.join("\n");
+    }
+
+    function buildMails(formName) {
+        const texts = MAIL_TEXTS[state.category] || MAIL_TEXTS.inquiry;
+        const fieldLines = mailFieldLines();
+        // ファイル添付 = el campo "File attachments" de CF7: un tag por línea
+        const attachments = state.fields
+            .filter(f => f.type === "file")
+            .map(f => `[${finalName(f)}]`)
+            .join("\n");
+
+        const mail = {
+            recipient: MAIL_ADDRESS,
+            sender: MAIL_SENDER,
+            subject: `${formName}｜[_site_title]`,
+            additional_headers: "Reply-To: [your-email]",
+            body: `${texts.adminIntro(formName)}\n\n${fieldLines}`,
+            attachments,
+        };
+        const mail2 = {
+            active: true,
+            recipient: "[your-email]",
+            sender: MAIL_SENDER,
+            subject: texts.replySubject,
+            additional_headers: "Reply-To: [_site_admin_email]",
+            body: `${texts.replyGreeting}\n${MAIL_REPLY_SECOND_LINE}\n\n${fieldLines}`,
+            attachments,
+        };
+        return { mail, mail2 };
+    }
+
+    // Datos para el plugin: forms (markup ya generado) + mails + その他の設定.
+    // Los mails solo van en el form final, que es el que envía.
+    function buildExport() {
+        const formName = formNameInput.value.trim();
+        const { mail, mail2 } = buildMails(formName);
+        const finalSettings = `flamingo_subject: "${formName}から"`;
+
+        let forms;
+        if (state.plugin === "multistep") {
+            const confirmName = confirmNameInput.value.trim() || `${formName}（確認）`;
+            forms = [
+                { role: "main", title: formName, form: outMain.value, additional_settings: "do_not_store: true" },
+                { role: "confirm", title: confirmName, form: outConfirm.value, mail, mail_2: mail2, additional_settings: finalSettings },
+            ];
+        } else {
+            forms = [
+                { role: "single", title: formName, form: outMain.value, mail, mail_2: mail2, additional_settings: finalSettings },
+            ];
+        }
+
+        return {
+            format: EXPORT_FORMAT,
+            version: EXPORT_VERSION,
+            plugin: state.plugin,
+            category: state.category,
+            forms,
+        };
+    }
+
+    // ----------------------------------------------------------------
     // Paso 2: pintar lista de campos editable
     // ----------------------------------------------------------------
     function renderFields() {
@@ -495,6 +599,15 @@
         r.addEventListener("change", syncPluginUi));
     syncPluginUi();
 
+    // Tipo de form (お問い合わせ / エントリー): cambia los textos de los mails
+    function syncCategory() {
+        const sel = document.querySelector('input[name="cf7Category"]:checked');
+        state.category = sel ? sel.value : "inquiry";
+    }
+    document.querySelectorAll('input[name="cf7Category"]').forEach(r =>
+        r.addEventListener("change", syncCategory));
+    syncCategory();
+
     analyzeBtn.addEventListener("click", () => {
         const html = htmlInput.value.trim();
         step1Status.textContent = "";
@@ -539,13 +652,39 @@
             outStyles.value = CONFIRMPLUS_STYLES;
         }
         stylesBlock.classList.remove("hidden");
+        setExportStatus("", false);
         showStep(resultPanel);
     });
 
     restartBtn.addEventListener("click", () => {
-        state = { originalHtml: "", plugin: state.plugin, fields: [] };
+        state = { originalHtml: "", plugin: state.plugin, category: state.category, fields: [] };
+        setExportStatus("", false);
         showStep(step1);
     });
+
+    // Export a JSON
+    function setExportStatus(text, isError) {
+        exportStatus.textContent = text;
+        exportStatus.classList.toggle("is-error", !!isError);
+    }
+
+    exportBtn.addEventListener("click", async () => {
+        const formName = formNameInput.value.trim();
+        if (!formName) { setExportStatus(t("cf7.errNoFormName"), true); return; }
+
+        const data = buildExport();
+        const fileName = formName.replace(/[\\/:*?"<>|]/g, "_") + ".json";
+        const r = await window.electronAPI.saveJsonFile(fileName, JSON.stringify(data, null, 2));
+        if (!r) return; // cancelado
+        if (r.error) { setExportStatus(t("common.error") + r.error, true); return; }
+
+        let msg = t("cf7.exportSaved") + r.path;
+        // Los mails usan [your-email] (Reply-To y destinatario del mail 2)
+        if (!state.fields.some(f => finalName(f) === "your-email")) msg += "\n" + t("cf7.warnNoEmail");
+        setExportStatus(msg, false);
+    });
+
+    pluginBtn.addEventListener("click", () => window.electronAPI.openPluginDownload());
 
     // Botones de copiar
     tab.querySelectorAll(".cf7-copy-btn").forEach(btn => {

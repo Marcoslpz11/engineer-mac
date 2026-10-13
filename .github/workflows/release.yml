@@ -40,6 +40,17 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
+      # Plugin de WordPress: se adjunta a la misma release (borrador) que acaba de crear
+      # electron-builder. La app lo descarga desde .../releases/latest/download/engineer-cf7-importer.zip
+      - name: Attach WordPress plugin
+        run: |
+          cd wp-plugin
+          zip -r ../engineer-cf7-importer.zip engineer-cf7-importer -x "*.DS_Store"
+          cd ..
+          gh release upload "$GITHUB_REF_NAME" engineer-cf7-importer.zip --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   # ------------------------------------------------------------------
   # Windows: instalador NSIS x64 (sin firma de código → SmartScreen
   # avisa en el primer install). Corre después de Mac para que ambos

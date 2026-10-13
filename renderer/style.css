@@ -1078,3 +1078,24 @@ body .bg-shape3 {
     cursor: pointer;
   }
   .cf7-copy-btn:hover { background: #dcebfa; }
+
+/* Form -> CF7: export JSON + plugin */
+  .cf7-export {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px;
+    background: #eef4fa;
+    border: 1px solid #c8d8ea;
+    border-radius: 8px;
+  }
+  .cf7-export .form-hint { margin: 0; }
+  .cf7-export-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cf7-export-status {
+    margin: 0;
+    font-size: 13px;
+    color: #1a6fa8;
+    white-space: pre-line;
+    word-break: break-all;
+  }
+  .cf7-export-status.is-error { color: #c0392b; }

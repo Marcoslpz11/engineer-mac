@@ -201,6 +201,13 @@
         </div>
       </div>
       <div class="form-group">
+        <span class="form-label" data-i18n="cf7.category">Form type</span>
+        <div class="cf7-plugin-row">
+          <label><input type="radio" name="cf7Category" value="inquiry" checked> <span data-i18n="cf7.catInquiry">Inquiry</span></label>
+          <label><input type="radio" name="cf7Category" value="entry"> <span data-i18n="cf7.catEntry">Entry</span></label>
+        </div>
+      </div>
+      <div class="form-group">
         <span class="form-label" data-i18n="cf7.formName">Form name</span>
         <input type="text" id="cf7FormName" placeholder="お問い合わせ">
       </div>
@@ -271,6 +278,14 @@
           <button class="cf7-copy-btn" data-target="cf7OutStyles" data-i18n="cf7.copy">Copy</button>
         </div>
         <textarea id="cf7OutStyles" class="cf7-output" rows="14" readonly></textarea>
+      </div>
+      <div class="cf7-export">
+        <p class="form-hint" data-i18n="cf7.exportHint">Export a JSON and import it in WordPress with the Engineer CF7 Importer plugin to create the forms, mails and settings.</p>
+        <div class="cf7-export-row">
+          <button id="cf7ExportBtn" data-i18n="cf7.exportJson">Export JSON</button>
+          <button id="cf7PluginBtn" class="btn-secondary" data-i18n="cf7.downloadPlugin">Download WordPress plugin</button>
+        </div>
+        <p id="cf7ExportStatus" class="cf7-export-status"></p>
       </div>
       <div class="cf7-nav">
         <button id="cf7Restart" class="btn-secondary" data-i18n="cf7.restart">Start over</button>

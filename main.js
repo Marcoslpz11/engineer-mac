@@ -1,8 +1,11 @@
-const { app, BrowserWindow, ipcMain, dialog, nativeImage } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, nativeImage, shell } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
 const https = require("https");
+
+// El CI adjunta el zip del plugin de WordPress a cada release; "latest" apunta a la última publicada.
+const PLUGIN_DOWNLOAD_URL = "https://github.com/Marcoslpz11/engineer-mac/releases/latest/download/engineer-cf7-importer.zip";
 
 // Endpoint del Worker de Cloudflare que crea los issues en GitHub.
 // Se rellena con la URL del Worker tras desplegarlo. Vacío = solo log local.
@@ -468,6 +471,26 @@ ipcMain.handle("create-template", async (_event, options) => {
 		return { error: err.message };
 	}
 });
+
+// ========================
+// Form -> CF7: export JSON + plugin
+// ========================
+ipcMain.handle("save-json-file", async (_event, { defaultName, content }) => {
+	try {
+		const { canceled, filePath } = await dialog.showSaveDialog(mainWindow, {
+			defaultPath: defaultName,
+			filters: [{ name: "JSON", extensions: ["json"] }],
+		});
+		if (canceled || !filePath) return null;
+		await fs.promises.writeFile(filePath, content, "utf-8");
+		return { path: filePath };
+	} catch (err) {
+		console.error("Error save-json-file:", err);
+		return { error: err.message };
+	}
+});
+
+ipcMain.handle("open-plugin-download", () => shell.openExternal(PLUGIN_DOWNLOAD_URL));
 
 ipcMain.handle("download-minified", async (_event, files) => {
 	try {
